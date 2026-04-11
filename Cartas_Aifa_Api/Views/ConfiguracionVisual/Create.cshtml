@@ -1,0 +1,934 @@
+﻿@model Cartas_Aifa_Api.Models.ConfiguracionVisual
+@{ ViewBag.Title = "Configuración Visual — AIFA"; }
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<style>
+    :root {
+        --aifa-navy: #0a1628;
+        --aifa-blue: #1a3a6e;
+        --aifa-sky: #1e6fb5;
+        --aifa-glow: #5bc4f5;
+        --aifa-gold: #c9a84c;
+        --aifa-red: #d4273a;
+        --aifa-teal: #1da89e;
+        --paper: #f4f6f9;
+    }
+
+    /* ── Página ── */
+    body {
+        background: var(--paper);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* ── Header ── */
+    .aifa-header {
+        background: linear-gradient(135deg, var(--aifa-navy) 0%, var(--aifa-blue) 60%, var(--aifa-sky) 100%);
+        padding: 18px 28px 14px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        border-bottom: 2px solid var(--aifa-gold);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .aifa-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient( 90deg, transparent, transparent 60px, rgba(255,255,255,0.025) 60px, rgba(255,255,255,0.026) 61px );
+            pointer-events: none;
+        }
+
+    .aifa-header-text {
+        flex: 1;
+    }
+
+    .aifa-header-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    .aifa-header-sub {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 11px;
+        color: var(--aifa-glow);
+        letter-spacing: 3px;
+        margin-top: 3px;
+        text-transform: uppercase;
+    }
+
+    .aifa-badge {
+        background: rgba(201,168,76,0.15);
+        border: 1px solid var(--aifa-gold);
+        color: var(--aifa-gold);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 11px;
+        padding: 5px 12px;
+        letter-spacing: 2px;
+        border-radius: 3px;
+        white-space: nowrap;
+    }
+
+    /* ── Lienzo ── */
+    .lienzo-label {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 3px;
+        color: var(--aifa-sky);
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+        .lienzo-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--aifa-sky), transparent);
+        }
+
+    #contenedor-hoja {
+        width: 100%;
+        max-width: 500px;
+        height: 700px;
+        background: white;
+        border: 1px solid rgba(91,196,245,0.35);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(91,196,245,0.1), 0 10px 40px rgba(10,22,40,0.18);
+        border-radius: 4px;
+        margin: auto;
+    }
+
+    /* Marcas de esquina */
+    .sheet-corner {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-color: rgba(91,196,245,0.4);
+        border-style: solid;
+        border-width: 0;
+        z-index: 1;
+    }
+
+        .sheet-corner.tl {
+            top: 6px;
+            left: 6px;
+            border-top-width: 1.5px;
+            border-left-width: 1.5px;
+        }
+
+        .sheet-corner.tr {
+            top: 6px;
+            right: 6px;
+            border-top-width: 1.5px;
+            border-right-width: 1.5px;
+        }
+
+        .sheet-corner.bl {
+            bottom: 6px;
+            left: 6px;
+            border-bottom-width: 1.5px;
+            border-left-width: 1.5px;
+        }
+
+        .sheet-corner.br {
+            bottom: 6px;
+            right: 6px;
+            border-bottom-width: 1.5px;
+            border-right-width: 1.5px;
+        }
+
+    /* Watermark */
+    .watermark-area {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 0;
+        gap: 8px;
+    }
+
+    .watermark-svg {
+        opacity: 0.07;
+    }
+
+    .watermark-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        color: rgba(30,111,181,0.5);
+        text-transform: uppercase;
+    }
+
+    /* Stripes de pista */
+    .runway-stripe {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.05;
+    }
+
+        .runway-stripe span {
+            display: block;
+            width: 20px;
+            height: 40px;
+            background: var(--aifa-sky);
+        }
+
+    /* ── Elementos en lienzo ── */
+    .elem-lienzo {
+        position: absolute;
+        cursor: move;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+    }
+
+        .elem-lienzo .lbl {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            padding: 2px 6px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .elem-lienzo.es-nuevo {
+            border: 1.5px dashed var(--aifa-red);
+            z-index: 20;
+        }
+
+            .elem-lienzo.es-nuevo .lbl {
+                background: rgba(212,39,58,0.85);
+                color: #fff;
+            }
+
+        .elem-lienzo.es-existente {
+            border: 1.5px dashed var(--aifa-gold);
+            z-index: 10;
+            opacity: .85;
+        }
+
+            .elem-lienzo.es-existente .lbl {
+                background: rgba(201,168,76,0.9);
+                color: #1a1a1a;
+            }
+
+        .elem-lienzo.seleccionado {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--aifa-glow);
+            z-index: 30 !important;
+            opacity: 1 !important;
+        }
+
+    /* ── Leyenda ── */
+    .leyenda {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 10px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        color: #888;
+        letter-spacing: 1px;
+    }
+
+        .leyenda span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+    .dot {
+        width: 14px;
+        height: 10px;
+        display: inline-block;
+    }
+
+    .dot-rojo {
+        border: 1.5px dashed var(--aifa-red);
+    }
+
+    .dot-gold {
+        border: 1.5px dashed var(--aifa-gold);
+    }
+
+    /* ── Panel ── */
+    .panel-config {
+        background: var(--aifa-navy);
+        color: #e8eaf0;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(10,22,40,0.25);
+    }
+
+    .panel-section {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+        .panel-section:last-child {
+            border-bottom: none;
+        }
+
+    .panel-section-title {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        color: var(--aifa-glow);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .panel-section-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--aifa-glow);
+            flex-shrink: 0;
+        }
+
+        .panel-section-title.gold-dot::before {
+            background: var(--aifa-gold);
+        }
+
+        .panel-section-title.red-dot::before {
+            background: var(--aifa-red);
+        }
+
+    label.flabel {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        color: #7a8aaa;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .panel-config .form-control {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #e8eaf0;
+        border-radius: 3px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+        padding: 6px 10px;
+        width: 100%;
+        transition: border-color 0.15s;
+    }
+
+        .panel-config .form-control:focus {
+            outline: none;
+            border-color: var(--aifa-glow);
+            background: rgba(91,196,245,0.06);
+        }
+
+    .fgroup {
+        margin-bottom: 10px;
+    }
+
+        .fgroup:last-child {
+            margin-bottom: 0;
+        }
+
+    .frow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    /* ── Aviso existentes ── */
+    #aviso-existentes {
+        display: none;
+        background: rgba(201,168,76,0.08);
+        border: 1px solid rgba(201,168,76,0.35);
+        color: var(--aifa-gold);
+        padding: 7px 10px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        border-radius: 3px;
+        margin-top: 8px;
+    }
+
+    /* ── Lista elementos ── */
+    #lista-elementos {
+        max-height: 180px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(91,196,245,0.3) transparent;
+    }
+
+    .item-lista {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        cursor: pointer;
+        transition: background 0.1s;
+        font-size: 12px;
+    }
+
+        .item-lista:last-child {
+            border-bottom: none;
+        }
+
+        .item-lista:hover {
+            background: rgba(255,255,255,0.04);
+        }
+
+        .item-lista.activo {
+            background: rgba(91,196,245,0.08);
+            border-left: 2px solid var(--aifa-glow);
+            padding-left: 8px;
+        }
+
+        .item-lista.es-nuevo.activo {
+            border-left-color: var(--aifa-red);
+        }
+
+        .item-lista.es-existente.activo {
+            border-left-color: var(--aifa-gold);
+        }
+
+    .item-thumb {
+        width: 30px;
+        height: 22px;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid rgba(255,255,255,0.12);
+        flex-shrink: 0;
+        border-radius: 2px;
+    }
+
+    .item-nombre {
+        flex: 1;
+        color: #b0bcd0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .tag-tipo {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 9px;
+        padding: 2px 5px;
+        border-radius: 2px;
+        letter-spacing: 1px;
+        flex-shrink: 0;
+    }
+
+    .tag-nuevo {
+        background: rgba(212,39,58,0.2);
+        color: #f07080;
+        border: 1px solid rgba(212,39,58,0.4);
+    }
+
+    .tag-exist {
+        background: rgba(201,168,76,0.2);
+        color: var(--aifa-gold);
+        border: 1px solid rgba(201,168,76,0.4);
+    }
+
+    /* ── Panel edición ── */
+    #panel-edicion {
+        display: none;
+    }
+
+    /* ── Botones ── */
+    .btn-agregar {
+        width: 100%;
+        padding: 9px;
+        background: transparent;
+        border: 1px solid var(--aifa-sky);
+        color: var(--aifa-glow);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 2px;
+        cursor: pointer;
+        border-radius: 3px;
+        margin-top: 10px;
+        text-transform: uppercase;
+        transition: background 0.15s, border-color 0.15s;
+    }
+
+        .btn-agregar:hover {
+            background: rgba(91,196,245,0.08);
+            border-color: var(--aifa-glow);
+        }
+
+    .btn-guardar {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, var(--aifa-blue), var(--aifa-sky));
+        border: 1px solid var(--aifa-glow);
+        color: #fff;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        cursor: pointer;
+        border-radius: 3px;
+        text-transform: uppercase;
+        transition: opacity 0.15s;
+    }
+
+        .btn-guardar:hover {
+            opacity: 0.85;
+        }
+
+    #msg-ok {
+        display: none;
+        background: rgba(29,168,158,0.12);
+        border: 1px solid rgba(29,168,158,0.4);
+        color: var(--aifa-teal);
+        padding: 8px 10px;
+        margin-top: 8px;
+        font-family: 'Share Tech Mono',monospace;
+        font-size: 10px;
+        letter-spacing: 1px;
+        border-radius: 3px;
+        text-align: center;
+    }
+
+    #msg-err {
+        display: none;
+        background: rgba(212,39,58,0.12);
+        border: 1px solid rgba(212,39,58,0.4);
+        color: #f07080;
+        padding: 8px 10px;
+        margin-top: 8px;
+        font-family: 'Share Tech Mono',monospace;
+        font-size: 10px;
+        letter-spacing: 1px;
+        border-radius: 3px;
+        text-align: center;
+    }
+</style>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HEADER AIFA                                         -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="aifa-header">
+    <!-- Logo alas AIFA en SVG inline -->
+    <svg width="80" height="54" viewBox="0 0 120 80" style="flex-shrink:0;">
+        <!-- Ala izquierda -->
+        <path d="M58 40 Q45 28 20 32 Q32 34 58 40Z" fill="#cc2438" opacity="0.95" />
+        <path d="M58 40 Q42 30 18 36 Q30 37 58 40Z" fill="#999" opacity="0.7" />
+        <path d="M58 40 Q44 26 16 30 Q28 31 58 40Z" fill="#999" opacity="0.5" />
+        <path d="M58 40 Q46 22 22 24 Q34 27 58 40Z" fill="#1da89e" opacity="0.85" />
+        <path d="M58 40 Q48 18 26 18 Q38 23 58 40Z" fill="#1da89e" opacity="0.70" />
+        <path d="M58 40 Q50 14 30 12 Q42 19 58 40Z" fill="#1da89e" opacity="0.55" />
+        <!-- Ala derecha -->
+        <path d="M62 40 Q75 28 100 32 Q88 34 62 40Z" fill="#cc2438" opacity="0.95" />
+        <path d="M62 40 Q78 30 102 36 Q90 37 62 40Z" fill="#999" opacity="0.7" />
+        <path d="M62 40 Q76 26 104 30 Q92 31 62 40Z" fill="#999" opacity="0.5" />
+        <path d="M62 40 Q74 22  98 24 Q86 27 62 40Z" fill="#1da89e" opacity="0.85" />
+        <path d="M62 40 Q72 18  94 18 Q82 23 62 40Z" fill="#1da89e" opacity="0.70" />
+        <path d="M62 40 Q70 14  90 12 Q78 19 62 40Z" fill="#1da89e" opacity="0.55" />
+    </svg>
+
+    <div class="aifa-header-text">
+        <div class="aifa-header-title">AIFA</div>
+        <div class="aifa-header-sub">Aeropuerto Internacional Felipe Ángeles</div>
+    </div>
+    <div class="aifa-badge">CONFIG. VISUAL</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- LAYOUT                                              -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="row">
+
+    <!-- ── LIENZO ── -->
+    <div class="col-md-7">
+        <div class="lienzo-label">Vista previa de carta</div>
+
+        <div id="contenedor-hoja">
+            <!-- Esquinas técnicas -->
+            <div class="sheet-corner tl"></div>
+            <div class="sheet-corner tr"></div>
+            <div class="sheet-corner bl"></div>
+            <div class="sheet-corner br"></div>
+
+            <!-- Watermark -->
+            <div class="watermark-area">
+                <svg class="watermark-svg" width="90" height="60" viewBox="0 0 120 80">
+                    <path d="M58 40 Q45 28 20 32 Q32 34 58 40Z" fill="#1e6fb5" />
+                    <path d="M58 40 Q42 30 18 36 Q30 37 58 40Z" fill="#1e6fb5" />
+                    <path d="M58 40 Q44 26 16 30 Q28 31 58 40Z" fill="#1e6fb5" />
+                    <path d="M58 40 Q46 22 22 24 Q34 27 58 40Z" fill="#1e6fb5" />
+                    <path d="M58 40 Q48 18 26 18 Q38 23 58 40Z" fill="#1e6fb5" />
+                    <path d="M62 40 Q75 28 100 32 Q88 34 62 40Z" fill="#1e6fb5" />
+                    <path d="M62 40 Q78 30 102 36 Q90 37 62 40Z" fill="#1e6fb5" />
+                    <path d="M62 40 Q76 26 104 30 Q92 31 62 40Z" fill="#1e6fb5" />
+                    <path d="M62 40 Q74 22  98 24 Q86 27 62 40Z" fill="#1e6fb5" />
+                    <path d="M62 40 Q72 18  94 18 Q82 23 62 40Z" fill="#1e6fb5" />
+                </svg>
+                <div class="watermark-text">Área de carta</div>
+                <div class="watermark-text" style="font-size:10px; letter-spacing:5px; margin-top:2px;">AIFA · SEDE CENTRAL</div>
+            </div>
+
+            <!-- Stripes de pista -->
+            <div class="runway-stripe">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div class="leyenda">
+            <span><i class="dot dot-rojo"></i> Nuevo elemento</span>
+            <span><i class="dot dot-gold"></i> Existente (editable)</span>
+        </div>
+    </div>
+
+    <!-- ── PANEL ── -->
+    <div class="col-md-5">
+        <div class="panel-config">
+
+            <!-- SECCIÓN 1: Contexto -->
+            <div class="panel-section">
+                <div class="panel-section-title">① Contexto de búsqueda</div>
+
+                <div class="fgroup">
+                    <label class="flabel">Año de aplicación</label>
+                    <input type="number" class="form-control" id="f-anio" value="@DateTime.Now.Year" />
+                </div>
+                <div class="fgroup">
+                    <label class="flabel">Mostrar en</label>
+                    <select class="form-control" id="f-mostrarEn">
+                        <option value="">-- Seleccione --</option>
+                        <option value="Aceptacion">Aceptación</option>
+                        <option value="Termino">Término</option>
+                        <option value="Ambas">Ambas</option>
+                    </select>
+                </div>
+                <div class="frow">
+                    <div class="fgroup">
+                        <label class="flabel">Fecha inicio</label>
+                        <input type="date" class="form-control" id="f-inicio" />
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Fecha fin</label>
+                        <input type="date" class="form-control" id="f-fin" />
+                    </div>
+                </div>
+
+                <div id="aviso-existentes">
+                    ↳ <strong id="num-exist">0</strong> configuraciones cargadas — puedes reposicionarlas
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: Agregar logo -->
+            <div class="panel-section">
+                <div class="panel-section-title red-dot">② Agregar nuevo logo</div>
+
+                <div class="fgroup">
+                    <label class="flabel">Logo del catálogo</label>
+                    @Html.DropDownList("ImagenId", null, "-- Seleccione --",
+                        new { @class = "form-control", id = "select-logo" })
+                </div>
+                <button type="button" class="btn-agregar" id="btn-agregar">+ Agregar al lienzo</button>
+            </div>
+
+            <!-- SECCIÓN 3: Lista elementos -->
+            <div class="panel-section">
+                <div class="panel-section-title gold-dot">Elementos en lienzo</div>
+
+                <div id="lista-elementos">
+                    <div style="padding:8px 0; font-family:'Share Tech Mono',monospace; font-size:10px; color:#506070; letter-spacing:1px;">
+                        Sin elementos aún
+                    </div>
+                </div>
+
+                <!-- Edición seleccionado -->
+                <div id="panel-edicion">
+                    <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06);">
+                        <div class="panel-section-title" style="margin-bottom:10px;">Editar seleccionado</div>
+                        <div class="frow" style="margin-bottom:8px;">
+                            <div class="fgroup">
+                                <label class="flabel">X (px)</label>
+                                <input type="number" class="form-control" id="edit-x" readonly />
+                            </div>
+                            <div class="fgroup">
+                                <label class="flabel">Y (px)</label>
+                                <input type="number" class="form-control" id="edit-y" readonly />
+                            </div>
+                        </div>
+                        <div class="frow">
+                            <div class="fgroup">
+                                <label class="flabel">Ancho</label>
+                                <input type="number" class="form-control" id="edit-w" min="30" />
+                            </div>
+                            <div class="fgroup">
+                                <label class="flabel">Alto</label>
+                                <input type="number" class="form-control" id="edit-h" min="20" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: Guardar -->
+            <div class="panel-section">
+                <button type="button" class="btn-guardar" id="btn-guardar">Guardar todo</button>
+                <div id="msg-ok">✓ Guardado correctamente</div>
+                <div id="msg-err">✗ Error al guardar</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+$(document).ready(function () {
+
+    var elementos = [], counter = 0, selId = null;
+
+    // ── Helpers ──────────────────────────────────────────
+    function getElem(id) { return elementos.find(function(e){ return e.id===id; }); }
+
+    function syncEdicion(id) {
+        var e = getElem(id); if (!e) return;
+        $("#edit-x").val(Math.round(e.x));
+        $("#edit-y").val(Math.round(e.y));
+        $("#edit-w").val(Math.round(e.w));
+        $("#edit-h").val(Math.round(e.h));
+    }
+
+    function seleccionar(id) {
+        selId = id;
+        $(".elem-lienzo").removeClass("seleccionado");
+        $(".item-lista").removeClass("activo");
+        var e = getElem(id);
+        if (!e) { $("#panel-edicion").hide(); return; }
+        e.$el.addClass("seleccionado");
+        $("#item-" + id).addClass("activo");
+        syncEdicion(id);
+        $("#panel-edicion").show();
+    }
+
+    function actualizarElem(id, x, y, w, h) {
+        var e = getElem(id); if (!e) return;
+        e.x=x; e.y=y; e.w=w; e.h=h;
+        if (selId===id) syncEdicion(id);
+    }
+
+    // ── Crear elemento en lienzo ─────────────────────────
+    function crearEnLienzo(elem) {
+        var clsTipo = elem.tipo === 'nuevo' ? 'es-nuevo' : 'es-existente';
+        var $el = $('<div class="elem-lienzo ' + clsTipo + '"></div>')
+            .css({
+                left: elem.x+"px", top: elem.y+"px",
+                width: elem.w+"px", height: elem.h+"px",
+                backgroundImage: "url('" + elem.url + "')"
+            })
+            .attr("data-id", elem.id);
+
+        $el.append('<span class="lbl">' + elem.nombre + '</span>');
+        elem.$el = $el;
+
+        $el.draggable({
+            containment: "#contenedor-hoja",
+            stop: function(e, ui) {
+                actualizarElem(elem.id, ui.position.left, ui.position.top,
+                    $(this).width(), $(this).height());
+            }
+        }).resizable({
+            containment: "#contenedor-hoja", handles: "all",
+            stop: function(e, ui) {
+                actualizarElem(elem.id, ui.position.left, ui.position.top,
+                    ui.size.width, ui.size.height);
+            }
+        });
+
+        $el.on("mousedown", function() { seleccionar(elem.id); });
+        $("#contenedor-hoja").append($el);
+        seleccionar(elem.id);
+    }
+
+    // ── Agregar a lista lateral ──────────────────────────
+    function agregarALista(elem) {
+        var tagClass  = elem.tipo === 'nuevo' ? 'tag-nuevo' : 'tag-exist';
+        var tagLabel  = elem.tipo === 'nuevo' ? 'NEW'       : 'EXIST';
+        var tipoClass = elem.tipo === 'nuevo' ? 'es-nuevo'  : 'es-existente';
+
+        $("#lista-elementos > div:first-child").filter(function(){
+            return $(this).find('.item-thumb').length === 0;
+        }).remove();
+
+        var $item = $(
+            '<div class="item-lista ' + tipoClass + '" id="item-' + elem.id + '" data-id="' + elem.id + '">'
+          + '<div class="item-thumb" style="background-image:url(\'' + elem.url + '\')"></div>'
+          + '<span class="item-nombre">' + elem.nombre + '</span>'
+          + '<span class="tag-tipo ' + tagClass + '">' + tagLabel + '</span>'
+          + '</div>'
+        );
+
+        $item.on("click", function() { seleccionar(elem.id); });
+        $("#lista-elementos").append($item);
+    }
+
+    // ── Cargar existentes ────────────────────────────────
+    function limpiarExistentes() {
+        elementos.filter(function(e){ return e.tipo==='existente'; })
+                 .forEach(function(e){ e.$el.remove(); $("#item-"+e.id).remove(); });
+        elementos = elementos.filter(function(e){ return e.tipo==='nuevo'; });
+        if (elementos.length === 0)
+            $("#lista-elementos").html('<div style="padding:8px 0;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:#506070;letter-spacing:1px;">Sin elementos aún</div>');
+        $("#aviso-existentes").hide();
+    }
+
+    function cargarExistentes() {
+        var anio   = $("#f-anio").val(),
+            mEn    = $("#f-mostrarEn").val(),
+            inicio = $("#f-inicio").val(),
+            fin    = $("#f-fin").val();
+
+        limpiarExistentes();
+        if (!anio || !mEn || !inicio || !fin) return;
+
+        $.ajax({
+            url: '@Url.Action("GetConfiguracionesExistentes", "ConfiguracionVisual")',
+            type: 'GET',
+            data: { anio: anio, mostrarEn: mEn, inicio: inicio, fin: fin },
+            success: function(data) {
+                if (!data || !data.length) return;
+                $("#num-exist").text(data.length);
+                $("#aviso-existentes").show();
+                $.each(data, function(i, item) {
+                    counter++;
+                    var elem = {
+                        id: counter, imagenId: item.imagenId || 0,
+                        dbId: item.dbId || 0, url: item.url,
+                        nombre: item.nombre || ('Elem ' + counter),
+                        tipo: 'existente',
+                        x: item.x, y: item.y, w: item.w, h: item.h, $el: null
+                    };
+                    elementos.push(elem);
+                    crearEnLienzo(elem);
+                    agregarALista(elem);
+                });
+            }
+        });
+    }
+
+    $("#f-anio, #f-mostrarEn, #f-inicio, #f-fin").on("change", cargarExistentes);
+
+    // ── Agregar nuevo logo ───────────────────────────────
+    $("#btn-agregar").on("click", function() {
+        var imagenId = $("#select-logo").val();
+        var nombre   = $("#select-logo option:selected").text().trim();
+        if (!imagenId) { alert("Selecciona un logo primero."); return; }
+        if (!$("#f-inicio").val() || !$("#f-fin").val() || !$("#f-mostrarEn").val()) {
+            alert("Completa primero el Año, Mostrar En y las fechas."); return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetImagenUrl", "ConfiguracionVisual")',
+            type: 'GET',
+            data: { id: imagenId },
+            success: function(response) {
+                if (response.url) {
+                    counter++;
+                    var elem = {
+                        id: counter, imagenId: parseInt(imagenId),
+                        dbId: 0, url: response.url, nombre: nombre,
+                        tipo: 'nuevo', x: 10, y: 10, w: 150, h: 100, $el: null
+                    };
+                    elementos.push(elem);
+                    crearEnLienzo(elem);
+                    agregarALista(elem);
+                }
+            }
+        });
+    });
+
+    // ── Edición manual de tamaño ─────────────────────────
+    $("#edit-w, #edit-h").on("change", function() {
+        if (!selId) return;
+        var e = getElem(selId); if (!e) return;
+        var w = parseInt($("#edit-w").val()) || e.w;
+        var h = parseInt($("#edit-h").val()) || e.h;
+        e.w=w; e.h=h;
+        e.$el.css({ width: w+"px", height: h+"px" });
+    });
+
+    // ── Guardar todo ─────────────────────────────────────
+    $("#btn-guardar").on("click", function() {
+        if (!elementos.length) { alert("No hay elementos en el lienzo."); return; }
+        var anio   = $("#f-anio").val(), mEn = $("#f-mostrarEn").val(),
+            inicio = $("#f-inicio").val(), fin = $("#f-fin").val();
+        if (!anio || !mEn || !inicio || !fin) {
+            alert("Completa todos los campos de contexto antes de guardar."); return;
+        }
+
+        var nuevos = [], existentes = [];
+        elementos.forEach(function(e) {
+            var payload = {
+                ImagenId: e.imagenId,
+                CoordX: Math.round(e.x), CoordY: Math.round(e.y),
+                Ancho:  Math.round(e.w), Alto:   Math.round(e.h),
+                AnioAplicacion: parseInt(anio),
+                MostrarEn: mEn, FechaInicio: inicio, FechaFin: fin
+            };
+            if (e.tipo === 'nuevo') {
+                nuevos.push(payload);
+            } else {
+                payload.Id = e.dbId;
+                existentes.push(payload);
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("GuardarSesion", "ConfiguracionVisual")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ nuevos: nuevos, existentes: existentes }),
+            success: function(r) {
+                if (r.success) {
+                    $("#msg-ok").show().delay(4000).fadeOut();
+                    $("#msg-err").hide();
+                } else {
+                    $("#msg-err").text("✗ " + (r.message || "Error.")).show();
+                }
+            },
+            error: function() { $("#msg-err").text("✗ Error de conexión.").show(); }
+        });
+    });
+});
+    </script>
+}

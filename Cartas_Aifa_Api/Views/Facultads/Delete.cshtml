@@ -1,0 +1,40 @@
+﻿@model Cartas_Aifa_Api.Models.Facultad
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Facultad</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Universidad.NombreU)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Universidad.NombreU)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreF)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreF)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

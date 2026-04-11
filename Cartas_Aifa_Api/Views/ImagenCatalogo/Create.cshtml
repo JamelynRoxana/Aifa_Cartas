@@ -1,0 +1,52 @@
+﻿@model Cartas_Aifa_Api.Models.ImagenCatalogo
+
+@{
+    ViewBag.Title = "Subir Imagen al Catálogo";
+}
+
+<h2>Crear Registro en Catálogo</h2>
+
+@* 1. AGREGAMOS: enctype para permitir el envío de archivos binarios *@
+@using (Html.BeginForm("Create", "ImagenCatalogo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Imagen del Catálogo</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NombreArchivo, "Nombre del Logo", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NombreArchivo, new { htmlAttributes = new { @class = "form-control", placeholder = "Ej: Logo AIFA Enero 2026" } })
+                @Html.ValidationMessageFor(model => model.NombreArchivo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @* 2. CAMBIO: Reemplazamos el Editor de UrlImagen por un input de tipo file *@
+        <div class="form-group">
+            <label class="control-label col-md-2">Seleccionar Archivo</label>
+            <div class="col-md-10">
+                <input type="file" name="archivoImagen" class="form-control" accept="image/*" required />
+                <span class="text-muted small">Formatos permitidos: .jpg, .png, .svg</span>
+            </div>
+        </div>
+
+        @* Nota: FechaCarga se quita de aquí porque se asigna automáticamente en el servidor *@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Subir y Guardar" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-link" })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
