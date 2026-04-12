@@ -6,7 +6,6 @@ using System.Web.Mvc;
 
 namespace Cartas_Aifa_Api.Controllers
 {
-    [Authorize] // Asegura que no se acceda al home (y sus vistas) a menos que se haya iniciado sesión
     public class HomeController : Controller
     {
         public ActionResult Index()

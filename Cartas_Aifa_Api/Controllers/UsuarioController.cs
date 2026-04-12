@@ -14,16 +14,6 @@ namespace Cartas_Aifa_Api.Controllers
     {
         private Model1 db = new Model1();
 
-
-        [Authorize]
-        [HttpGet]
-        [ActionName("GetTest")]
-        public ActionResult GetTest()
-        {
-            return Json(new { saludo = "sopa de queso" }, JsonRequestBehavior.AllowGet);
-        }
-
-
         // GET: Usuario
         public ActionResult Index()
         {
