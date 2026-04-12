@@ -1,0 +1,70 @@
+﻿@model Cartas_Aifa_Api.Models.ImagenCatalogo
+
+@{
+    ViewBag.Title = "Editar Imagen";
+}
+
+<h2>Editar Registro</h2>
+
+@* 1. AGREGAMOS: enctype y apuntamos explícitamente a la acción Edit *@
+@using (Html.BeginForm("Edit", "ImagenCatalogo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Imagen del Catálogo</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @* 2. CAMPOS OCULTOS: Necesarios para no perder el ID ni la URL si no se cambia la imagen *@
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.UrlImagen)
+        @Html.HiddenFor(model => model.FechaCarga)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NombreArchivo, "Nombre del Logo", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NombreArchivo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreArchivo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @* 3. VISTA PREVIA: Para que el usuario vea qué imagen está guardada actualmente *@
+        <div class="form-group">
+            <label class="control-label col-md-2">Imagen Actual</label>
+            <div class="col-md-10">
+                @if (!string.IsNullOrEmpty(Model.UrlImagen))
+                {
+                    <img src="@Url.Content(Model.UrlImagen)" style="width:150px; border:1px solid #ccc; padding:5px; border-radius:5px;" />
+                }
+                else
+                {
+                    <span class="text-muted">No hay imagen cargada.</span>
+                }
+            </div>
+        </div>
+
+        @* 4. SELECCIONAR NUEVA IMAGEN: Este input envía el archivo al controlador *@
+        <div class="form-group">
+            <label class="control-label col-md-2">Cambiar Imagen</label>
+            <div class="col-md-10">
+                <input type="file" name="archivoImagen" class="form-control" accept="image/*" />
+                <p class="help-block small">Deje este campo vacío para conservar la imagen actual.</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Guardar Cambios" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-link" })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

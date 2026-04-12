@@ -1,0 +1,11 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@using (Html.BeginForm("Login", "Account", new { area = "" }, FormMethod.Post))
+{
+    <button type="submit">Iniciar Sesion</button>
+}
