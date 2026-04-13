@@ -7,3 +7,5 @@
   --color-mint-cream: #f0f7f4;
   --color-celadon: #a2e3c4;
 }
+
+@source "../Views/**/*.cshtml";
