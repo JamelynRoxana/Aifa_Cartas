@@ -244,7 +244,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\api\AuthController.cs" />
-    <Compile Include="Controllers\AuthVController.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\AutoridadCartasController.cs" />
     <Compile Include="Controllers\ConfiguracionVisualController.cs" />
     <Compile Include="Controllers\DetalleEtapaController.cs" />
