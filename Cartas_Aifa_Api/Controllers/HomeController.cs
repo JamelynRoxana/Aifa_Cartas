@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace Cartas_Aifa_Api.Controllers
 {
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class HomeController : Controller
     {
         public ActionResult Index()

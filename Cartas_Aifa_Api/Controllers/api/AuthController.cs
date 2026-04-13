@@ -81,6 +81,7 @@ namespace Cartas_Aifa_Api.Controllers.api
             }
         }
 
+
         [Authorize]
         [HttpPost]
         [Route("Logout")]

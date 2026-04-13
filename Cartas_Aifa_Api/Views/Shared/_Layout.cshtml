@@ -11,9 +11,16 @@
 
     <!-- Bloquear renderizado si no hay JWT -->
     <script>
-        if (!localStorage.getItem('jwt_token') && window.location.pathname.toLowerCase().indexOf('/auth/login') === -1) {
-            window.location.replace('@Url.Action("Login", "Auth")');
+        function checkAuth() {
+            if (!localStorage.getItem('jwt_token') && window.location.pathname.toLowerCase().indexOf('/auth/login') === -1) {
+                window.location.replace('@Url.Action("Login", "Auth")');
+            }
         }
+        checkAuth(); // Ejecuta al cargar 
+        // Ejecuta al volver atrás o adelante en el navegador
+        window.addEventListener('pageshow', function (event) {
+            checkAuth();
+        });
     </script>
 </head>
 <body class="bg-[#F4F6F8] font-sans m-0 text-slate-800">
