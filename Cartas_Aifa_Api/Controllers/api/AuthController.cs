@@ -70,9 +70,9 @@ namespace Cartas_Aifa_Api.Controllers.api
 
                 var token = CrearToken(usuarioEncontrado);
 
-                return Ok(new { 
-                    message = "Login correcto", 
-                    token = token 
+                return Ok(new
+                {
+                    token = token
                 });
             }
             catch (Exception ex)
@@ -81,7 +81,7 @@ namespace Cartas_Aifa_Api.Controllers.api
             }
         }
 
-        [Authorize] 
+        [Authorize]
         [HttpPost]
         [Route("Logout")]
         public IHttpActionResult Logout()
@@ -114,7 +114,7 @@ namespace Cartas_Aifa_Api.Controllers.api
                 issuer: "CartasAifaApi",
                 audience: "CartasAifaApiUsers",
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1), 
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
