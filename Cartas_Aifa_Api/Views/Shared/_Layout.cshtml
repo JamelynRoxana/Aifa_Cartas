@@ -1,9 +1,64 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var navMenus = new[]
+    {
+         new {
+             Title = "Universidades",
+             IsRightAligned = false,
+             Items = new[] {
+                 new { Text = "Registro", Icon = "bi-passport", Link = Url.Action("Create", "TramiteAcademico"), HtmlId = "" },
+                 new { Text = "Listado", Icon = "bi-building", Link = Url.Action("Index", "TramiteAcademico"), HtmlId = "" }
+             }
+         },
+         new {
+             Title = "Estudiantes",
+             IsRightAligned = false,
+             Items = new[] {
+                 new { Text = "Registro", Icon = "bi-person-plus", Link = "#", HtmlId = "" },
+                 new { Text = "Etapa", Icon = "bi-bar-chart-steps", Link = "#", HtmlId = "" }
+             }
+         },
+         new {
+             Title = "Aeropuerto",
+             IsRightAligned = false,
+             Items = new[] {
+                 new { Text = "Direcciones", Icon = "bi-map", Link = "#", HtmlId = "" },
+                 new { Text = "Subdirecciones", Icon = "bi-diagram-3", Link = "#", HtmlId = "" },
+                 new { Text = "Firma", Icon = "bi-vector-pen", Link = "#", HtmlId = "" }
+             }
+         },
+         new {
+             Title = "Imagenes",
+             IsRightAligned = false,
+             Items = new[] {
+                 new { Text = "Catalogo", Icon = "bi-images", Link = "#", HtmlId = "" },
+                 new { Text = "Configuracion", Icon = "bi-sliders", Link = "#", HtmlId = "" }
+             }
+         },
+         new {
+             Title = "Carta",
+             IsRightAligned = false,
+             Items = new[] {
+                 new { Text = "Etapa", Icon = "bi-layers-half", Link = "#", HtmlId = "" },
+                 new { Text = "Carta", Icon = "bi-palette", Link = "#", HtmlId = "" }
+             }
+         },
+         new {
+             Title = "Usuario",
+             IsRightAligned = true,
+             Items = new[] {
+                 new { Text = "Administrar", Icon = "bi-person-gear", Link = "#", HtmlId = "" },
+                 new { Text = "Cerrar sesión", Icon = "bi-box-arrow-right", Link = "javascript:void(0);", HtmlId = "btnLogout" }
+             }
+         }
+     };
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Terminal Digital</title>
+    <title>@ViewBag.Title</title>
 
     <link href="~/Content/tailwind.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -28,60 +83,7 @@
         </div>
 
         <div id="navMenu" class="hidden w-full xl:flex xl:w-auto xl:items-center xl:ml-12 mt-4 xl:mt-0 xl:flex-1">
-            @{
-                var navMenus = new[]
-                {
-                    new {
-                        Title = "Universidades",
-                        IsRightAligned = false,
-                        Items = new[] {
-                            new { Text = "Registro", Icon = "bi-passport", Link = Url.Action("Create", "TramiteAcademico"), HtmlId = "" },
-                            new { Text = "Listado", Icon = "bi-building", Link = Url.Action("Index", "TramiteAcademico"), HtmlId = "" }
-                        }
-                    },
-                    new {
-                        Title = "Estudiantes",
-                        IsRightAligned = false,
-                        Items = new[] {
-                            new { Text = "Registro", Icon = "bi-person-plus", Link = "#", HtmlId = "" },
-                            new { Text = "Etapa", Icon = "bi-bar-chart-steps", Link = "#", HtmlId = "" }
-                        }
-                    },
-                    new {
-                        Title = "Aeropuerto",
-                        IsRightAligned = false,
-                        Items = new[] {
-                            new { Text = "Direcciones", Icon = "bi-map", Link = "#", HtmlId = "" },
-                            new { Text = "Subdirecciones", Icon = "bi-diagram-3", Link = "#", HtmlId = "" },
-                            new { Text = "Firma", Icon = "bi-vector-pen", Link = "#", HtmlId = "" }
-                        }
-                    },
-                    new {
-                        Title = "Imagenes",
-                        IsRightAligned = false,
-                        Items = new[] {
-                            new { Text = "Catalogo", Icon = "bi-images", Link = "#", HtmlId = "" },
-                            new { Text = "Configuracion", Icon = "bi-sliders", Link = "#", HtmlId = "" }
-                        }
-                    },
-                    new {
-                        Title = "Carta",
-                        IsRightAligned = false,
-                        Items = new[] {
-                            new { Text = "Etapa", Icon = "bi-layers-half", Link = "#", HtmlId = "" },
-                            new { Text = "Carta", Icon = "bi-palette", Link = "#", HtmlId = "" }
-                        }
-                    },
-                    new {
-                        Title = "Usuario",
-                        IsRightAligned = true,
-                        Items = new[] {
-                            new { Text = "Administrar", Icon = "bi-person-gear", Link = "#", HtmlId = "" },
-                            new { Text = "Cerrar sesión", Icon = "bi-box-arrow-right", Link = "javascript:void(0);", HtmlId = "btnLogout" }
-                        }
-                    }
-                };
-            }
+
             <ul class="flex flex-col xl:flex-row list-none p-0 m-0 w-full xl:w-auto xl:mr-auto xl:ml-5">
                 @foreach (var menu in navMenus)
                 {
@@ -92,7 +94,7 @@
                             {
                                 <li>
                                     <a id="@item.HtmlId" class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 @(item.HtmlId == "btnLogout" ? "hover:bg-red-50 hover:translate-x-0" : "hover:bg-[#eef7ff] hover:translate-x-2") text-gray-800" href="@item.Link">
-                                        <i class="bi @item.Icon mr-3 @(item.HtmlId == "btnLogout" ? "text-red-500 font-bold" : "text-[#0074d9]")"></i> 
+                                        <i class="bi @item.Icon mr-3 @(item.HtmlId == "btnLogout" ? "text-red-500 font-bold" : "text-[#0074d9]")"></i>
                                         <span class="@(item.HtmlId == "btnLogout" ? "text-red-600 font-bold" : "")">@item.Text</span>
                                     </a>
                                 </li>
@@ -142,7 +144,7 @@
                 window.location.href = '@Url.Action("Login", "Auth")';
             }
         });
-        
+
         $(document).ready(function() {
             var hasHero = @(IsSectionDefined("Hero").ToString().ToLower());
             var isMenuExpanded = false;
@@ -170,11 +172,11 @@
                     e.preventDefault();
                     var $menu = $(this).next('.nav-dropdown-menu');
                     var $icon = $(this).find('.bi-chevron-down');
-                    
+
                     // Cierra los demás menús que estén abiertos
                     $('.nav-dropdown-menu').not($menu).slideUp(300);
                     $('.nav-dropdown-toggle .bi-chevron-down').not($icon).removeClass('rotate-180');
-                    
+
                     // Alterna el menú actual
                     $menu.slideToggle(300);
                     $icon.toggleClass('rotate-180');
