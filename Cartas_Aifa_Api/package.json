@@ -5,7 +5,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npx @tailwindcss/cli -i ./Content/tailwind-input.css -o ./Content/tailwind.css --watch"
+    "watch": "npx @tailwindcss/cli -i ./Content/tailwind-input.css -o ./Content/tailwind.css --watch",
+    "build": "npx tailwindcss -i ./Content/tailwind-input.css -o ./Content/tailwind.css --minify"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1"
