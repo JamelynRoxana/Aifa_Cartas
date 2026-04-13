@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npx @tailwindcss/cli -i ./Content/tailwind-input.css -o ./Content/tailwind.css --watch"
+  },
+  "dependencies": {
+    "bootstrap-icons": "^1.13.1"
+  }
+}

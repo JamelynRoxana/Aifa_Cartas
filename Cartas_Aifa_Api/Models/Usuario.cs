@@ -13,6 +13,8 @@ namespace Cartas_Aifa_Api.Models
         public string Nombre { get; set; } = string.Empty;
         public string Correo { get; set; } = string.Empty;
 
+        public string Contrasena { get; set; } = string.Empty;
+
         // Define el rol: "Administrativo", "Recursos Humanos" o "Estudiante"
         public string Rol { get; set; } = string.Empty;
 

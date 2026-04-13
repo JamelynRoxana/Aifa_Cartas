@@ -3,3 +3,4 @@
 **/obj/
 **/packages/
 *.user
+node_modules/
