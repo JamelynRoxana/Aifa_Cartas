@@ -17,7 +17,7 @@
     </script>
 </head>
 <body class="bg-[#F4F6F8] font-sans m-0 text-slate-800">
-    <nav id="mainNav" class="fixed top-0 w-full z-50 flex flex-wrap items-center justify-between px-6 py-4 xl:py-5 transition-all duration-400 ease-in-out text-white @(IsSectionDefined("Hero") ? "bg-transparent py-5" : "bg-base-blue/95 backdrop-blur-md py-3 shadow-[0_4px_20px_rgba(0,0,0,0.2)]")">
+    <nav id="mainNav" class="fixed top-0 w-full z-50 flex flex-wrap items-center justify-between px-6 py-4 xl:py-5 transition-all duration-400 ease-in-out text-white @(IsSectionDefined("Hero") ? "bg-transparent py-5" : "bg-[#001f3f]/95 backdrop-blur-md py-3 shadow-[0_4px_20px_rgba(0,0,0,0.2)]")">
         <div class="flex items-center justify-between w-full xl:w-auto">
             <a class="flex items-center transition-opacity hover:opacity-80 border-none outline-none" href="@Url.Action("Index", "Home")">
                 <img src="~/Assets/Imagenes/Logo-AIFA.png" alt="Logo AIFA" class="h-10 md:h-12 xl:h-14 w-auto drop-shadow-md border-0 outline-none" />
@@ -114,7 +114,7 @@
         </div>
     </main>
 
-    <footer class="text-center bg-base-blue text-white/60 py-12 mt-12">
+    <footer class="text-center bg-[#001f3f] text-white/60 py-12 mt-12">
         <p>&copy; @DateTime.Now.Year - Terminal Pro Aeropuerto Internacional</p>
     </footer>
 
@@ -150,11 +150,11 @@
             function updateNavbarStyle() {
                 if ($(window).scrollTop() > 50 || !hasHero || isMenuExpanded) {
                     $('#mainNav')
-                        .addClass('bg-base-blue/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
+                        .addClass('bg-[#001f3f]/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
                         .removeClass('bg-transparent py-5');
                 } else {
                     $('#mainNav')
-                        .removeClass('bg-base-blue/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
+                        .removeClass('bg-[#001f3f]/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
                         .addClass('bg-transparent py-5');
                 }
             }
