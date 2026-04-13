@@ -1,64 +1,9 @@
-﻿@{
-    var navMenus = new[]
-    {
-         new {
-             Title = "Universidades",
-             IsRightAligned = false,
-             Items = new[] {
-                 new { Text = "Registro", Icon = "bi-passport", Link = Url.Action("Create", "TramiteAcademico"), HtmlId = "" },
-                 new { Text = "Listado", Icon = "bi-building", Link = Url.Action("Index", "TramiteAcademico"), HtmlId = "" }
-             }
-         },
-         new {
-             Title = "Estudiantes",
-             IsRightAligned = false,
-             Items = new[] {
-                 new { Text = "Registro", Icon = "bi-person-plus", Link = "#", HtmlId = "" },
-                 new { Text = "Etapa", Icon = "bi-bar-chart-steps", Link = "#", HtmlId = "" }
-             }
-         },
-         new {
-             Title = "Aeropuerto",
-             IsRightAligned = false,
-             Items = new[] {
-                 new { Text = "Direcciones", Icon = "bi-map", Link = "#", HtmlId = "" },
-                 new { Text = "Subdirecciones", Icon = "bi-diagram-3", Link = "#", HtmlId = "" },
-                 new { Text = "Firma", Icon = "bi-vector-pen", Link = "#", HtmlId = "" }
-             }
-         },
-         new {
-             Title = "Imagenes",
-             IsRightAligned = false,
-             Items = new[] {
-                 new { Text = "Catalogo", Icon = "bi-images", Link = "#", HtmlId = "" },
-                 new { Text = "Configuracion", Icon = "bi-sliders", Link = "#", HtmlId = "" }
-             }
-         },
-         new {
-             Title = "Carta",
-             IsRightAligned = false,
-             Items = new[] {
-                 new { Text = "Etapa", Icon = "bi-layers-half", Link = "#", HtmlId = "" },
-                 new { Text = "Carta", Icon = "bi-palette", Link = "#", HtmlId = "" }
-             }
-         },
-         new {
-             Title = "Usuario",
-             IsRightAligned = true,
-             Items = new[] {
-                 new { Text = "Administrar", Icon = "bi-person-gear", Link = "#", HtmlId = "" },
-                 new { Text = "Cerrar sesión", Icon = "bi-box-arrow-right", Link = "javascript:void(0);", HtmlId = "btnLogout" }
-             }
-         }
-     };
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <title>@ViewBag.Title - Terminal Digital</title>
 
     <link href="~/Content/tailwind.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -72,7 +17,7 @@
     </script>
 </head>
 <body class="bg-[#F4F6F8] font-sans m-0 text-slate-800">
-    <nav id="mainNav" class="fixed top-0 w-full z-50 flex flex-wrap items-center justify-between px-6 py-4 xl:py-5 transition-all duration-400 ease-in-out text-white @(IsSectionDefined("Hero") ? "bg-transparent py-5" : "bg-base-blue/95 backdrop-blur-md py-3 shadow-[0_4px_20px_rgba(0,0,0,0.2)]")">
+    <nav id="mainNav" class="fixed top-0 w-full z-50 flex flex-wrap items-center justify-between px-6 py-4 xl:py-5 transition-all duration-400 ease-in-out text-white @(IsSectionDefined("Hero") ? "bg-transparent py-5" : "bg-[#001f3f]/95 backdrop-blur-md py-3 shadow-[0_4px_20px_rgba(0,0,0,0.2)]")">
         <div class="flex items-center justify-between w-full xl:w-auto">
             <a class="flex items-center transition-opacity hover:opacity-80 border-none outline-none" href="@Url.Action("Index", "Home")">
                 <img src="~/Assets/Imagenes/Logo-AIFA.png" alt="Logo AIFA" class="h-10 md:h-12 xl:h-14 w-auto drop-shadow-md border-0 outline-none" />
@@ -83,7 +28,60 @@
         </div>
 
         <div id="navMenu" class="hidden w-full xl:flex xl:w-auto xl:items-center xl:ml-12 mt-4 xl:mt-0 xl:flex-1">
-
+            @{
+                var navMenus = new[]
+                {
+                    new {
+                        Title = "Universidades",
+                        IsRightAligned = false,
+                        Items = new[] {
+                            new { Text = "Registro", Icon = "bi-passport", Link = Url.Action("Create", "TramiteAcademico"), HtmlId = "" },
+                            new { Text = "Listado", Icon = "bi-building", Link = Url.Action("Index", "TramiteAcademico"), HtmlId = "" }
+                        }
+                    },
+                    new {
+                        Title = "Estudiantes",
+                        IsRightAligned = false,
+                        Items = new[] {
+                            new { Text = "Registro", Icon = "bi-person-plus", Link = "#", HtmlId = "" },
+                            new { Text = "Etapa", Icon = "bi-bar-chart-steps", Link = "#", HtmlId = "" }
+                        }
+                    },
+                    new {
+                        Title = "Aeropuerto",
+                        IsRightAligned = false,
+                        Items = new[] {
+                            new { Text = "Direcciones", Icon = "bi-map", Link = "#", HtmlId = "" },
+                            new { Text = "Subdirecciones", Icon = "bi-diagram-3", Link = "#", HtmlId = "" },
+                            new { Text = "Firma", Icon = "bi-vector-pen", Link = "#", HtmlId = "" }
+                        }
+                    },
+                    new {
+                        Title = "Imagenes",
+                        IsRightAligned = false,
+                        Items = new[] {
+                            new { Text = "Catalogo", Icon = "bi-images", Link = "#", HtmlId = "" },
+                            new { Text = "Configuracion", Icon = "bi-sliders", Link = "#", HtmlId = "" }
+                        }
+                    },
+                    new {
+                        Title = "Carta",
+                        IsRightAligned = false,
+                        Items = new[] {
+                            new { Text = "Etapa", Icon = "bi-layers-half", Link = "#", HtmlId = "" },
+                            new { Text = "Carta", Icon = "bi-palette", Link = "#", HtmlId = "" }
+                        }
+                    },
+                    new {
+                        Title = "Usuario",
+                        IsRightAligned = true,
+                        Items = new[] {
+                            new { Text = "Administrar", Icon = "bi-person-gear", Link = "#", HtmlId = "" },
+                            new { Text = "Cerrar sesión", Icon = "bi-box-arrow-right", Link = "javascript:void(0);", HtmlId = "btnLogout" }
+                        }
+                    }
+                };
+            }
             <ul class="flex flex-col xl:flex-row list-none p-0 m-0 w-full xl:w-auto xl:mr-auto xl:ml-5">
                 @foreach (var menu in navMenus)
                 {
@@ -94,7 +92,7 @@
                             {
                                 <li>
                                     <a id="@item.HtmlId" class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 @(item.HtmlId == "btnLogout" ? "hover:bg-red-50 hover:translate-x-0" : "hover:bg-[#eef7ff] hover:translate-x-2") text-gray-800" href="@item.Link">
-                                        <i class="bi @item.Icon mr-3 @(item.HtmlId == "btnLogout" ? "text-red-500 font-bold" : "text-[#0074d9]")"></i>
+                                        <i class="bi @item.Icon mr-3 @(item.HtmlId == "btnLogout" ? "text-red-500 font-bold" : "text-[#0074d9]")"></i> 
                                         <span class="@(item.HtmlId == "btnLogout" ? "text-red-600 font-bold" : "")">@item.Text</span>
                                     </a>
                                 </li>
@@ -116,7 +114,7 @@
         </div>
     </main>
 
-    <footer class="text-center bg-base-blue text-white/60 py-12 mt-12">
+    <footer class="text-center bg-[#001f3f] text-white/60 py-12 mt-12">
         <p>&copy; @DateTime.Now.Year - Terminal Pro Aeropuerto Internacional</p>
     </footer>
 
@@ -144,7 +142,7 @@
                 window.location.href = '@Url.Action("Login", "Auth")';
             }
         });
-
+        
         $(document).ready(function() {
             var hasHero = @(IsSectionDefined("Hero").ToString().ToLower());
             var isMenuExpanded = false;
@@ -152,11 +150,11 @@
             function updateNavbarStyle() {
                 if ($(window).scrollTop() > 50 || !hasHero || isMenuExpanded) {
                     $('#mainNav')
-                        .addClass('bg-base-blue/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
+                        .addClass('bg-[#001f3f]/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
                         .removeClass('bg-transparent py-5');
                 } else {
                     $('#mainNav')
-                        .removeClass('bg-base-blue/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
+                        .removeClass('bg-[#001f3f]/95 backdrop-blur-md !py-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]')
                         .addClass('bg-transparent py-5');
                 }
             }
@@ -172,11 +170,11 @@
                     e.preventDefault();
                     var $menu = $(this).next('.nav-dropdown-menu');
                     var $icon = $(this).find('.bi-chevron-down');
-
+                    
                     // Cierra los demás menús que estén abiertos
                     $('.nav-dropdown-menu').not($menu).slideUp(300);
                     $('.nav-dropdown-toggle .bi-chevron-down').not($icon).removeClass('rotate-180');
-
+                    
                     // Alterna el menú actual
                     $menu.slideToggle(300);
                     $icon.toggleClass('rotate-180');
