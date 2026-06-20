@@ -1,26 +1,15 @@
-## .NET / C#
-bin/
-obj/
+﻿**/.vs/
+**/bin/
+**/obj/
+**/packages/
 *.user
-*.suo
-*.userosscache
-*.sln.docstates
 
 ## Build results
 [Dd]ebug/
 [Rr]elease/
-x64/
-x86/
 
 ## NuGet
 *.nupkg
-**/packages/*
-!**/packages/build/
-
-## Visual Studio
-.vs/
-*.rsuser
-*.DotSettings.user
 
 ## Node / Tailwind
 node_modules/
@@ -30,6 +19,5 @@ wwwroot/css/output.css
 .DS_Store
 Thumbs.db
 
-## User-specific files
+## Logs
 *.log
-appsettings.Development.json
