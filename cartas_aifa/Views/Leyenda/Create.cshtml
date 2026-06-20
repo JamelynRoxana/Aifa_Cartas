@@ -1,0 +1,169 @@
+@model Leyenda
+@{
+    ViewData["Title"] = "Crear Leyenda";
+}
+
+<div class="max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-blockquote-left mr-2"></i>Crear Leyenda</h2>
+
+    <form asp-action="Create" method="post" class="space-y-6">
+
+        <div>
+            <label asp-for="Texto" class="block text-sm font-semibold text-gray-700 mb-2">Texto de la leyenda (usa Enter para renglones)</label>
+            <textarea asp-for="Texto" rows="4" id="textoInput" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Línea 1&#10;Línea 2&#10;Línea 3"></textarea>
+            <span asp-validation-for="Texto" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label asp-for="Alineacion" class="block text-sm font-semibold text-gray-700 mb-2">Alineación</label>
+                <select asp-for="Alineacion" id="alineacionSelect" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Centrado">Centrado</option>
+                    <option value="Izquierda">Izquierda</option>
+                    <option value="Derecha">Derecha</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="TamanoFuente" class="block text-sm font-semibold text-gray-700 mb-2">Tamaño de fuente (pt)</label>
+                <input asp-for="TamanoFuente" type="number" min="6" max="24" value="10" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+            <div>
+                <label asp-for="EstiloFuente" class="block text-sm font-semibold text-gray-700 mb-2">Estilo</label>
+                <select asp-for="EstiloFuente" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Normal">Normal</option>
+                    <option value="Bold">Negrita</option>
+                    <option value="Italic">Cursiva</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Vista previa en hoja -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                <i class="bi bi-cursor mr-1"></i> Vista previa - arrastra verticalmente para posicionar
+            </label>
+
+            <div class="flex justify-center">
+                <div class="relative border border-gray-300 rounded-2xl bg-white overflow-hidden shadow-md w-full max-w-[600px]"
+                     id="pdfCanvas" style="aspect-ratio: 8.5/11;">
+
+                    <!-- Leyenda preview -->
+                    <div id="leyendaElement" class="absolute cursor-ns-resize w-full px-[8%]" style="top: 5%;">
+                        <div id="leyendaPreview" style="white-space: pre-line; font-size: 9px; color: #1e3a5f; padding: 4px 8px; background: rgba(219,234,254,0.7); border: 1px dashed #3b82f6; border-radius: 4px; text-align: center;">Texto de leyenda</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-center gap-6 text-sm text-gray-500">
+                <span class="bg-gray-100 px-3 py-1 rounded-lg"><i class="bi bi-geo-alt-fill mr-1 text-blue-500"></i>Y: <strong id="displayY" class="text-gray-800">5%</strong></span>
+            </div>
+        </div>
+
+        <input type="hidden" name="CoordX" id="coordX" value="0" />
+        <input type="hidden" name="CoordY" id="coordY" value="5" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="MostrarEn" class="block text-sm font-semibold text-gray-700 mb-2">Mostrar En</label>
+                <select asp-for="MostrarEn" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Ambas">Ambas</option>
+                    <option value="Aceptacion">Aceptación</option>
+                    <option value="Termino">Término</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="FechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
+                <input asp-for="FechaInicio" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+            <div>
+                <label asp-for="FechaFin" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
+                <input asp-for="FechaFin" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                <i class="bi bi-check-lg mr-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    var canvas = document.getElementById('pdfCanvas');
+    var el = document.getElementById('leyendaElement');
+    var previewDiv = document.getElementById('leyendaPreview');
+    var textarea = document.getElementById('textoInput');
+    var alignSelect = document.getElementById('alineacionSelect');
+    var isDragging = false, startY, startTop;
+
+    // Actualizar texto preview
+    textarea.addEventListener('input', function() {
+        previewDiv.textContent = this.value || 'Texto de leyenda';
+    });
+
+    // Actualizar alineación
+    alignSelect.addEventListener('change', function() {
+        var val = this.value;
+        previewDiv.style.textAlign = val === 'Centrado' ? 'center' : val === 'Derecha' ? 'right' : 'left';
+    });
+
+    // Actualizar estilo de fuente
+    var estiloSelect = document.querySelector('select[name="EstiloFuente"]');
+    estiloSelect.addEventListener('change', updateEstilo);
+    function updateEstilo() {
+        var val = estiloSelect.value;
+        previewDiv.style.fontWeight = val === 'Bold' ? 'bold' : 'normal';
+        previewDiv.style.fontStyle = val === 'Italic' ? 'italic' : 'normal';
+    }
+    updateEstilo();
+
+    // Actualizar tamaño de fuente
+    var tamanoInput = document.querySelector('input[name="TamanoFuente"]');
+    tamanoInput.addEventListener('input', updateTamano);
+    function updateTamano() {
+        var size = parseInt(tamanoInput.value) || 10;
+        // Escalar proporcionalmente al canvas (el canvas es ~600px para una página de ~792pt)
+        var scale = canvas.offsetHeight / 792;
+        previewDiv.style.fontSize = (size * scale) + 'px';
+    }
+    updateTamano();
+
+    // Drag vertical
+    el.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startY = e.clientY;
+        startTop = el.offsetTop;
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        var newTop = Math.max(0, Math.min(canvas.offsetHeight - el.offsetHeight, startTop + (e.clientY - startY)));
+        el.style.top = newTop + 'px';
+        updateCoords();
+    });
+    document.addEventListener('mouseup', function() { isDragging = false; });
+
+    // Click para posicionar
+    canvas.addEventListener('click', function(e) {
+        if (el.contains(e.target)) return;
+        var rect = canvas.getBoundingClientRect();
+        var newTop = Math.max(0, Math.min(canvas.offsetHeight - el.offsetHeight, e.clientY - rect.top - el.offsetHeight / 2));
+        el.style.top = newTop + 'px';
+        updateCoords();
+    });
+
+    function updateCoords() {
+        var y = (el.offsetTop / canvas.offsetHeight * 100).toFixed(2);
+        document.getElementById('coordY').value = y;
+        document.getElementById('displayY').textContent = y + '%';
+    }
+})();
+</script>
+}

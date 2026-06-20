@@ -1,0 +1,70 @@
+@model IEnumerable<DireccionAifa>
+@{
+    ViewData["Title"] = "Direcciones AIFA";
+}
+
+<div class="flex flex-wrap items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-gray-900"><i class="bi bi-map mr-2"></i>Direcciones AIFA</h2>
+    <a asp-action="Create" class="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">
+        <i class="bi bi-plus-circle mr-1"></i> Crear Nuevo
+    </a>
+</div>
+
+<form method="get" asp-action="Index" class="mb-6">
+    <div class="flex gap-3 items-center">
+        <input type="text" name="buscar" value="@ViewBag.BuscarActual" placeholder="Buscar por nombre de dirección..."
+               class="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+        <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+            <i class="bi bi-search mr-1"></i> Buscar
+        </button>
+        @if (!string.IsNullOrEmpty((string?)ViewBag.BuscarActual))
+        {
+            <a asp-action="Index" class="bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-300 transition-colors">
+                <i class="bi bi-x-lg mr-1"></i> Limpiar
+            </a>
+        }
+    </div>
+</form>
+
+<div class="overflow-x-visible rounded-xl border border-gray-200">
+    <table class="w-full text-left border-collapse">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-6 py-3 font-bold text-gray-900">Nombre Dirección</th>
+                <th class="px-4 py-3 font-bold text-gray-900 text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 text-gray-900">@item.NombreDir</td>
+                        <td class="px-4 py-4 text-center">
+                            <div class="relative inline-block">
+                                <button class="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none actions-toggle">
+                                    <i class="bi bi-three-dots-vertical text-gray-600 text-lg"></i>
+                                </button>
+                                <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] hidden actions-menu">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-t-xl"><i class="bi bi-pencil mr-2 text-blue-500"></i>Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="bi bi-eye mr-2 text-gray-500"></i>Detalles</a>
+                                    <button type="button" onclick="openDeleteModal('/@(ViewContext.RouteData.Values["controller"])/Delete/@item.Id')" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-xl"><i class="bi bi-trash mr-2"></i>Eliminar</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" class="text-center py-12 text-gray-500">
+                        <i class="bi bi-inbox text-4xl block mb-3"></i>
+                        No hay direcciones registradas.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

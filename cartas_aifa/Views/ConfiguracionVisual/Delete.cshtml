@@ -1,0 +1,50 @@
+@model ConfiguracionVisual
+@{
+    ViewData["Title"] = "Eliminar Configuración Visual";
+}
+
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-red-600 mb-2"><i class="bi bi-trash mr-2"></i>Eliminar Configuración Visual</h2>
+    <p class="text-gray-600 mb-6">¿Está seguro que desea eliminar esta configuración visual?</p>
+    <div class="bg-red-50 border border-red-200 rounded-xl p-6 space-y-4">
+        <div>
+            <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Imagen</span>
+            <p class="text-lg text-gray-900 mt-1">@Model.Imagen?.NombreArchivo</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Coord X</span>
+                <p class="text-lg text-gray-900 mt-1">@Model.CoordX</p>
+            </div>
+            <div>
+                <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Coord Y</span>
+                <p class="text-lg text-gray-900 mt-1">@Model.CoordY</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Ancho</span>
+                <p class="text-lg text-gray-900 mt-1">@Model.Ancho</p>
+            </div>
+            <div>
+                <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Alto</span>
+                <p class="text-lg text-gray-900 mt-1">@Model.Alto</p>
+            </div>
+        </div>
+        <div>
+            <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Año de Aplicación</span>
+            <p class="text-lg text-gray-900 mt-1">@Model.AnioAplicacion</p>
+        </div>
+        <div>
+            <span class="text-sm font-bold text-gray-500 uppercase tracking-wide">Mostrar En</span>
+            <p class="text-lg text-gray-900 mt-1">@Model.MostrarEn</p>
+        </div>
+    </div>
+    <form asp-action="Delete" method="post" class="flex items-center gap-4 mt-6">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">
+            <i class="bi bi-trash mr-1"></i> Confirmar Eliminación
+        </button>
+        <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+    </form>
+</div>

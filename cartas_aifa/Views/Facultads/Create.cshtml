@@ -1,0 +1,31 @@
+@model Facultad
+@{
+    ViewData["Title"] = "Crear Facultad";
+}
+
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-building mr-2"></i>Crear Facultad</h2>
+
+    <form asp-action="Create" method="post" class="space-y-6">
+        <div>
+            <label asp-for="IdU" class="block text-sm font-semibold text-gray-700 mb-2">Universidad</label>
+            <select asp-for="IdU" asp-items="ViewBag.IdU" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="IdU" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="NombreF" class="block text-sm font-semibold text-gray-700 mb-2">Nombre de Facultad</label>
+            <input asp-for="NombreF" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Nombre de la facultad" />
+            <span asp-validation-for="NombreF" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                <i class="bi bi-check-lg mr-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>

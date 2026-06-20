@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base-blue: #001f3f;
+  --color-grey-olive: #7e8d85;
+  --color-ash-grey: #b3bfb8;
+  --color-mint-cream: #f0f7f4;
+  --color-celadon: #a2e3c4;
+}
+
+@source "../Views/**/*.cshtml";

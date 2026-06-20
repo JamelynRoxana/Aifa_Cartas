@@ -1,0 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace cartas_aifa.Models;
+
+[Table("Carreras")]
+public class Carrera
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public int IdF { get; set; }
+
+    [ForeignKey("IdF")]
+    public Facultad? Facultad { get; set; }
+
+    [Required]
+    public string NombreCarrera { get; set; } = string.Empty;
+}

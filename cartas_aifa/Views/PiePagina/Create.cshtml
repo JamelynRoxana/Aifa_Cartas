@@ -1,0 +1,134 @@
+@model PiePagina
+@{ ViewData["Title"] = "Crear Pie de Página"; }
+
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-text-paragraph mr-2"></i>Crear Pie de Página</h2>
+
+    <form asp-action="Create" method="post" class="space-y-6">
+        <input type="hidden" name="ColorLinea" id="hiddenColorLinea" value="#0c2f57" />
+        <div>
+            <label asp-for="Texto" class="block text-sm font-semibold text-gray-700 mb-2">Texto del pie de página</label>
+            <textarea asp-for="Texto" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Texto que aparecerá en el pie de página"></textarea>
+            <span asp-validation-for="Texto" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="Alineacion" class="block text-sm font-semibold text-gray-700 mb-2">Alineación</label>
+                <select asp-for="Alineacion" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Centrado">Centrado</option>
+                    <option value="Izquierda">Izquierda</option>
+                    <option value="Derecha">Derecha</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="TamanoFuente" class="block text-sm font-semibold text-gray-700 mb-2">Tamaño de fuente</label>
+                <input asp-for="TamanoFuente" type="number" min="6" max="16" value="9" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="TieneLinea" class="block text-sm font-semibold text-gray-700 mb-2">¿Tiene recuadro?</label>
+                <select asp-for="TieneLinea" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="GrosorLinea" class="block text-sm font-semibold text-gray-700 mb-2">Grosor borde (pt)</label>
+                <input asp-for="GrosorLinea" type="number" step="0.5" min="0" max="5" value="2" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="ColorFondo" class="block text-sm font-semibold text-gray-700 mb-2">Color de fondo y borde</label>
+                <input asp-for="ColorFondo" type="color" value="#0c2f57" class="w-full h-12 border border-gray-200 rounded-xl cursor-pointer" />
+            </div>
+            <div>
+                <label asp-for="ColorLetra" class="block text-sm font-semibold text-gray-700 mb-2">Color de letra</label>
+                <input asp-for="ColorLetra" type="color" value="#ffffff" class="w-full h-12 border border-gray-200 rounded-xl cursor-pointer" />
+            </div>
+        </div>
+
+        <!-- Vista previa -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Vista previa</label>
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <div id="previewBox" style="border: 1.5pt solid #0c2f57; padding: 6px 12px; width: 100%; background-color: #0c2f57;">
+                    <p id="previewText" style="font-size: 9px; text-align: center; color: #ffffff; margin: 0;">Texto del pie de página</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <label asp-for="MostrarEn" class="block text-sm font-semibold text-gray-700 mb-2">Mostrar En</label>
+            <select asp-for="MostrarEn" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="Ambas">Ambas</option>
+                <option value="Aceptacion">Aceptación</option>
+                <option value="Termino">Término</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="FechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
+                <input asp-for="FechaInicio" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+            <div>
+                <label asp-for="FechaFin" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
+                <input asp-for="FechaFin" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm"><i class="bi bi-check-lg mr-1"></i> Guardar</button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    var textarea = document.querySelector('textarea[name="Texto"]');
+    var grosorInput = document.querySelector('input[name="GrosorLinea"]');
+    var tieneLineaSelect = document.querySelector('select[name="TieneLinea"]');
+    var alineacionSelect = document.querySelector('select[name="Alineacion"]');
+    var tamanoInput = document.querySelector('input[name="TamanoFuente"]');
+    var colorFondoInput = document.querySelector('input[name="ColorFondo"]');
+    var colorLetraInput = document.querySelector('input[name="ColorLetra"]');
+    var previewText = document.getElementById('previewText');
+    var previewBox = document.getElementById('previewBox');
+
+    function update() {
+        previewText.textContent = textarea.value || 'Texto del pie de página';
+        previewText.style.fontSize = (parseInt(tamanoInput.value) || 9) + 'px';
+        var align = alineacionSelect.value;
+        previewText.style.textAlign = align === 'Centrado' ? 'center' : align === 'Derecha' ? 'right' : 'left';
+        previewText.style.color = colorLetraInput.value;
+        previewBox.style.backgroundColor = colorFondoInput.value;
+        var grosor = parseFloat(grosorInput.value) || 2;
+        previewBox.style.padding = (grosor * 2) + 'px 12px';
+        var hiddenLinea = document.getElementById('hiddenColorLinea');
+        if (hiddenLinea) hiddenLinea.value = colorFondoInput.value;
+        
+        if (tieneLineaSelect.value === 'true') {
+            previewBox.style.display = 'block';
+        } else {
+            previewBox.style.backgroundColor = 'transparent';
+        }
+    }
+
+    textarea.addEventListener('input', update);
+    grosorInput.addEventListener('input', update);
+    tieneLineaSelect.addEventListener('change', update);
+    alineacionSelect.addEventListener('change', update);
+    tamanoInput.addEventListener('input', update);
+    colorFondoInput.addEventListener('input', update);
+    colorLetraInput.addEventListener('input', update);
+    update();
+})();
+</script>
+}

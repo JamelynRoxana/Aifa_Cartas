@@ -1,0 +1,28 @@
+@model Carrera
+@{
+    ViewData["Title"] = "Detalles de Carrera";
+}
+
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-journal-bookmark mr-2"></i>Detalles de Carrera</h2>
+
+    <div class="space-y-4">
+        <div>
+            <span class="block text-sm font-semibold text-gray-500">Carrera</span>
+            <span class="text-lg text-gray-900">@Model.NombreCarrera</span>
+        </div>
+        <div>
+            <span class="block text-sm font-semibold text-gray-500">Facultad</span>
+            <span class="text-lg text-gray-900">@Model.Facultad?.NombreF</span>
+        </div>
+        <div>
+            <span class="block text-sm font-semibold text-gray-500">Universidad</span>
+            <span class="text-lg text-gray-900">@Model.Facultad?.Universidad?.NombreU</span>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-4 pt-6">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">Editar</a>
+        <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Volver</a>
+    </div>
+</div>

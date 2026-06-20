@@ -1,0 +1,15 @@
+{
+  "name": "cartas_aifa",
+  "private": true,
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  },
+  "scripts": {
+    "watch": "npx @tailwindcss/cli -i ./Styles/tailwind-input.css -o ./wwwroot/css/tailwind.css --watch",
+    "build": "npx @tailwindcss/cli -i ./Styles/tailwind-input.css -o ./wwwroot/css/tailwind.css --minify"
+  },
+  "dependencies": {
+    "bootstrap-icons": "^1.13.1"
+  }
+}

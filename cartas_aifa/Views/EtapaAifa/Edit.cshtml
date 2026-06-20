@@ -1,0 +1,71 @@
+@model EtapaAifa
+@{
+    ViewData["Title"] = "Editar Etapa AIFA";
+}
+
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-pencil mr-2"></i>Editar Etapa AIFA</h2>
+
+    <form asp-action="Edit" method="post" class="space-y-6">
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label asp-for="IdEstudiante" class="block text-sm font-semibold text-gray-700 mb-2">Estudiante</label>
+            <select asp-for="IdEstudiante" asp-items="@((SelectList)ViewBag.IdEstudiante)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="IdEstudiante" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="IdDetalleEtapa" class="block text-sm font-semibold text-gray-700 mb-2">Detalle Etapa</label>
+            <select asp-for="IdDetalleEtapa" asp-items="@((SelectList)ViewBag.IdDetalleEtapa)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="IdDetalleEtapa" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="IdDireccion" class="block text-sm font-semibold text-gray-700 mb-2">Dirección</label>
+            <select asp-for="IdDireccion" asp-items="@((SelectList)ViewBag.IdDireccion)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="IdDireccion" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="IdSubdireccion" class="block text-sm font-semibold text-gray-700 mb-2">Subdirección</label>
+            <select asp-for="IdSubdireccion" asp-items="@((SelectList)ViewBag.IdSubdireccion)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="IdSubdireccion" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="FechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
+            <input asp-for="FechaInicio" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            <span asp-validation-for="FechaInicio" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="FechaFin" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
+            <input asp-for="FechaFin" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            <span asp-validation-for="FechaFin" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="Activa" class="block text-sm font-semibold text-gray-700 mb-2">Activa</label>
+            <select asp-for="Activa" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="true">Activa</option>
+                <option value="false">Inactiva</option>
+            </select>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                <i class="bi bi-check-lg mr-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,35 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+## NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+## Visual Studio
+.vs/
+*.rsuser
+*.DotSettings.user
+
+## Node / Tailwind
+node_modules/
+wwwroot/css/output.css
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## User-specific files
+*.log
+appsettings.Development.json

@@ -1,0 +1,150 @@
+@model Leyenda
+@{
+    ViewData["Title"] = "Editar Leyenda";
+}
+
+<div class="max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-pencil mr-2"></i>Editar Leyenda</h2>
+
+    <form asp-action="Edit" method="post" class="space-y-6">
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label asp-for="Texto" class="block text-sm font-semibold text-gray-700 mb-2">Texto de la leyenda</label>
+            <textarea asp-for="Texto" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"></textarea>
+            <span asp-validation-for="Texto" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label asp-for="Alineacion" class="block text-sm font-semibold text-gray-700 mb-2">Alineación</label>
+                <select asp-for="Alineacion" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Centrado">Centrado</option>
+                    <option value="Izquierda">Izquierda</option>
+                    <option value="Derecha">Derecha</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="TamanoFuente" class="block text-sm font-semibold text-gray-700 mb-2">Tamaño de fuente (pt)</label>
+                <input asp-for="TamanoFuente" type="number" min="6" max="24" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+            <div>
+                <label asp-for="EstiloFuente" class="block text-sm font-semibold text-gray-700 mb-2">Estilo</label>
+                <select asp-for="EstiloFuente" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Normal">Normal</option>
+                    <option value="Bold">Negrita</option>
+                    <option value="Italic">Cursiva</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Mapa interactivo -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-3"><i class="bi bi-cursor mr-1"></i> Posicionar leyenda</label>
+            <div class="flex justify-center">
+                <div class="relative border border-gray-300 rounded-2xl bg-gray-100 overflow-hidden shadow-md w-full max-w-[600px]" id="pdfCanvas" style="aspect-ratio: 8.5/11;">
+                    <div class="absolute inset-0 pointer-events-none p-[8%]">
+                        <div class="w-full h-full border border-dashed border-gray-300 rounded-lg"></div>
+                    </div>
+                    <div id="leyendaElement" class="absolute cursor-move bg-blue-100 border border-blue-400 rounded px-2 py-1 select-none max-w-[80%]">
+                        <span id="leyendaPreview" class="text-[10px] text-blue-800 font-medium whitespace-pre-line text-center block">@Model.Texto</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+                <span class="bg-gray-100 px-3 py-1 rounded-lg">X: <strong id="displayX">@Model.CoordX%</strong></span>
+                <span class="bg-gray-100 px-3 py-1 rounded-lg">Y: <strong id="displayY">@Model.CoordY%</strong></span>
+            </div>
+        </div>
+
+        <input type="hidden" name="CoordX" id="coordX" value="@Model.CoordX.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+        <input type="hidden" name="CoordY" id="coordY" value="@Model.CoordY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="MostrarEn" class="block text-sm font-semibold text-gray-700 mb-2">Mostrar En</label>
+                <select asp-for="MostrarEn" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="Ambas">Ambas</option>
+                    <option value="Aceptacion">Aceptación</option>
+                    <option value="Termino">Término</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="FechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
+                <input asp-for="FechaInicio" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+            <div>
+                <label asp-for="FechaFin" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
+                <input asp-for="FechaFin" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                <i class="bi bi-check-lg mr-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    var canvas = document.getElementById('pdfCanvas');
+    var el = document.getElementById('leyendaElement');
+    var textarea = document.querySelector('textarea[name="Texto"]');
+    var preview = document.getElementById('leyendaPreview');
+    var isDragging = false, startX, startY, startLeft, startTop;
+
+    // Posicionar con valores guardados
+    var savedX = parseFloat('@Model.CoordX.ToString(System.Globalization.CultureInfo.InvariantCulture)');
+    var savedY = parseFloat('@Model.CoordY.ToString(System.Globalization.CultureInfo.InvariantCulture)');
+    setTimeout(function() {
+        el.style.left = savedX + '%';
+        el.style.top = savedY + '%';
+    }, 100);
+
+    textarea.addEventListener('input', function() { preview.textContent = this.value || 'Texto'; });
+
+    // Actualizar alineación en preview
+    var alignSelect = document.querySelector('select[name="Alineacion"]');
+    alignSelect.addEventListener('change', updateAlignment);
+    function updateAlignment() {
+        var align = alignSelect.value;
+        preview.style.textAlign = align === 'Centrado' ? 'center' : align === 'Derecha' ? 'right' : 'left';
+    }
+    updateAlignment();
+
+    el.addEventListener('mousedown', function(e) {
+        isDragging = true; startX = e.clientX; startY = e.clientY;
+        startLeft = el.offsetLeft; startTop = el.offsetTop; e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        el.style.left = Math.max(0, Math.min(canvas.offsetWidth - el.offsetWidth, startLeft + e.clientX - startX)) + 'px';
+        el.style.top = Math.max(0, Math.min(canvas.offsetHeight - el.offsetHeight, startTop + e.clientY - startY)) + 'px';
+        updateCoords();
+    });
+    document.addEventListener('mouseup', function() { isDragging = false; });
+    canvas.addEventListener('click', function(e) {
+        if (e.target === el || el.contains(e.target)) return;
+        var rect = canvas.getBoundingClientRect();
+        el.style.left = Math.max(0, e.clientX - rect.left - el.offsetWidth/2) + 'px';
+        el.style.top = Math.max(0, e.clientY - rect.top - el.offsetHeight/2) + 'px';
+        updateCoords();
+    });
+    function updateCoords() {
+        var x = (el.offsetLeft / canvas.offsetWidth * 100).toFixed(2);
+        var y = (el.offsetTop / canvas.offsetHeight * 100).toFixed(2);
+        document.getElementById('coordX').value = x;
+        document.getElementById('coordY').value = y;
+        document.getElementById('displayX').textContent = x + '%';
+        document.getElementById('displayY').textContent = y + '%';
+    }
+})();
+</script>
+}

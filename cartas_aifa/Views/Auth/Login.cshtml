@@ -1,0 +1,303 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Expediente Aero - Login";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4f8;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0,31,63,0.04) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(162,227,196,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #fff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.04);
+            position: relative;
+            z-index: 10;
+            min-height: 560px;
+        }
+
+        /* Panel izquierdo */
+        .left-panel {
+            background: linear-gradient(160deg, #001f3f 0%, #0c3d6e 100%);
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(162,227,196,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -40px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0,116,217,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .left-panel .content { position: relative; z-index: 2; }
+        .left-panel img { height: 48px; margin-bottom: 2.5rem; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .left-panel h1 { color: #fff; font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; }
+        .left-panel h1 span { color: #a2e3c4; }
+        .left-panel p { color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; max-width: 280px; margin-top: 1rem; }
+        .left-panel .footer { position: relative; z-index: 2; color: rgba(255,255,255,0.3); font-size: 0.7rem; letter-spacing: 0.05em; }
+        .left-panel .deco-icon { position: absolute; bottom: 20px; right: 20px; font-size: 8rem; color: rgba(255,255,255,0.02); z-index: 1; }
+
+        /* Panel derecho */
+        .right-panel {
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .right-panel h2 { font-size: 1.6rem; font-weight: 800; color: #001f3f; margin-bottom: 0.3rem; }
+        .right-panel .subtitle { color: #6b7c93; font-size: 0.85rem; margin-bottom: 2rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7c93; margin-bottom: 0.5rem; margin-left: 2px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i.icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #a0aec0; font-size: 1.1rem; transition: color 0.3s; }
+        .input-wrapper input {
+            width: 100%;
+            padding: 15px 15px 15px 48px;
+            background: #f7f9fc;
+            border: 1.5px solid #e8edf3;
+            border-radius: 14px;
+            color: #001f3f;
+            font-size: 0.9rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .input-wrapper input::placeholder { color: #b8c5d3; }
+        .input-wrapper input:focus { border-color: #a2e3c4; background: #fff; box-shadow: 0 0 0 4px rgba(162,227,196,0.15); }
+        .input-wrapper input:focus + i.icon, .input-wrapper input:focus ~ i.icon { color: #001f3f; }
+        .toggle-pass { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #b8c5d3; cursor: pointer; font-size: 1.1rem; transition: color 0.2s; }
+        .toggle-pass:hover { color: #001f3f; }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: #001f3f;
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,31,63,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 0.75rem;
+        }
+        .btn-login:hover { background: #001730; box-shadow: 0 12px 28px rgba(0,31,63,0.3); transform: translateY(-1px); }
+        .btn-login:active { transform: scale(0.98); }
+        .btn-login:disabled { opacity: 0.7; cursor: wait; }
+        .btn-login .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #a2e3c4; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-box { display: none; align-items: center; padding: 12px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; margin-bottom: 1rem; }
+        .error-box i { color: #ef4444; margin-right: 10px; font-size: 1rem; }
+        .error-box span { color: #b91c1c; font-size: 0.82rem; font-weight: 600; }
+        .error-box.show { display: flex; }
+
+        .divider { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #edf2f7; text-align: center; }
+        .divider a { font-size: 0.78rem; font-weight: 600; color: #6b7c93; text-decoration: none; transition: color 0.2s; }
+        .divider a:hover { color: #001f3f; }
+
+        /* Mobile */
+        @@media (max-width: 768px) {
+            .login-container { grid-template-columns: 1fr; max-width: 420px; }
+            .left-panel { display: none; }
+            .right-panel { padding: 2.5rem 2rem; }
+            .mobile-logo { display: flex; justify-content: center; margin-bottom: 2rem; }
+            .mobile-logo img { height: 52px; }
+        }
+        @@media (min-width: 769px) {
+            .mobile-logo { display: none; }
+        }
+    </style>
+
+    <script>
+        function redirectIfLoggedIn() {
+            if (localStorage.getItem('jwt_token')) { window.location.replace('/'); }
+        }
+        redirectIfLoggedIn();
+        window.addEventListener('pageshow', function () { redirectIfLoggedIn(); });
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Panel izquierdo -->
+        <div class="left-panel">
+            <div class="content">
+                <img src="/images/Logo-AIFA.png" alt="Logo AIFA" />
+                <h1>Gestión<br/><span>Expediente Aero</span></h1>
+                <p>Impulsando el talento que mueve nuestra terminal. Acceda para validar el progreso de los alumnos y emitir los documentos que avalan su trayectoria profesional.</p>
+            </div>
+            <div class="footer">&copy; <span id="currentYear2"></span> AIFA - Sistema de Control Operativo</div>
+            <i class="bi bi-shield-lock-fill deco-icon"></i>
+        </div>
+
+        <!-- Panel derecho -->
+        <div class="right-panel">
+            <div class="mobile-logo">
+                <img src="/images/Logo-AIFA.png" alt="Logo AIFA" />
+            </div>
+
+            <h2>Bienvenido de nuevo</h2>
+            <p class="subtitle">Ingresa tus credenciales para continuar.</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="correo">Correo electrónico</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="correo" required placeholder="correo@@gmail.com" autocomplete="email" />
+                        <i class="bi bi-envelope icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="contrasena" required placeholder="••••••••" autocomplete="current-password" />
+                        <i class="bi bi-lock icon"></i>
+                        <button type="button" class="toggle-pass" id="togglePass">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="error-box" id="error-msg">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="error-text"></span>
+                </div>
+
+                <button type="submit" class="btn-login" id="btn-submit">
+                    <span id="btn-text">Iniciar Sesión</span>
+                    <i class="bi bi-arrow-right" id="btn-icon"></i>
+                    <div class="spinner" id="btn-spinner"></div>
+                </button>
+            </form>
+
+            <div class="divider">
+                <a href="/Auth/ForgotPassword">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#currentYear2').text(new Date().getFullYear());
+
+            $('#togglePass').click(function() {
+                var input = $('#contrasena');
+                var icon = $('#eyeIcon');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                }
+            });
+
+            $('#loginForm').submit(function (e) {
+                e.preventDefault();
+                $('#error-msg').removeClass('show');
+                $('#btn-submit').prop('disabled', true);
+                $('#btn-text').text('Verificando...');
+                $('#btn-icon').hide();
+                $('#btn-spinner').show();
+
+                $.ajax({
+                    url: '/api/auth/Login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ Correo: $('#correo').val(), Contrasena: $('#contrasena').val() }),
+                    success: function (response) {
+                        localStorage.setItem('jwt_token', response.token);
+                        localStorage.setItem('user_name', response.nombre || '');
+                        if (response.requiereCambio) {
+                            window.location.href = '/Auth/CambiarContrasena';
+                        } else {
+                            window.location.href = '/';
+                        }
+                    },
+                    error: function (xhr) {
+                        var errMsg = "Error de conexión con el servidor.";
+                        if (xhr.status === 401) errMsg = "Correo o contraseña incorrectos.";
+                        else if (xhr.responseJSON && xhr.responseJSON.Message) errMsg = xhr.responseJSON.Message;
+                        $('#error-text').text(errMsg);
+                        $('#error-msg').addClass('show');
+                        $('#btn-submit').prop('disabled', false);
+                        $('#btn-text').text('Iniciar Sesión');
+                        $('#btn-icon').show();
+                        $('#btn-spinner').hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

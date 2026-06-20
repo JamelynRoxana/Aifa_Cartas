@@ -1,0 +1,298 @@
+@model ConfiguracionVisual
+@{
+    ViewData["Title"] = "Crear Configuración Visual";
+}
+
+<div class="max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-palette mr-2"></i>Crear Configuración Visual</h2>
+
+    <form asp-action="Create" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+
+        <!-- Selector de imagen -->
+        <div>
+            <label asp-for="ImagenId" class="block text-sm font-semibold text-gray-700 mb-2">Imagen</label>
+            <select asp-for="ImagenId" asp-items="ViewBag.ImagenId" id="imagenSelect"
+                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+            </select>
+            <span asp-validation-for="ImagenId" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- Mapa interactivo -->
+        <div id="mapContainer" class="@(Model != null && Model.ImagenId > 0 ? "" : "hidden")">
+            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                <i class="bi bi-cursor mr-1"></i> Posicionar imagen en el documento
+            </label>
+            <p class="text-xs text-gray-400 mb-3">Click para posicionar · Arrastra para mover · Esquina inferior derecha para redimensionar</p>
+
+            <div class="flex justify-center">
+                <div class="relative rounded-2xl bg-white overflow-visible shadow-lg w-full max-w-[600px]"
+                     id="pdfCanvas" style="box-sizing: content-box; aspect-ratio: 8.5/11; background-image: url('/ConfiguracionVisual/PreviewImage'); background-size: 100% 100%; background-repeat: no-repeat;">
+                    <!-- Imagen posicionable -->
+                    <div id="imageElement"
+                         class="absolute cursor-move border-2 border-blue-500 rounded-lg shadow-lg bg-white/50 flex flex-col items-center justify-center select-none"
+                         style="width: 20%; height: 15%; top: 10%; left: 10%;">
+                        <div id="realImageBorder" class="absolute border-2 border-yellow-400 rounded pointer-events-none" style="display:none;"></div>
+                        <img id="previewImg" src="" alt="" class="w-full h-full object-fill hidden" style="max-width:100%;max-height:100%;" />
+                        <i id="previewIcon" class="bi bi-image text-3xl text-blue-400"></i>
+                        <span id="previewLabel" class="text-[10px] font-bold text-blue-600 text-center px-1 mt-1 truncate w-full"></span>
+                        <!-- Handle de resize -->
+                        <div id="resizeHandle" class="absolute bottom-0 right-0 w-5 h-5 bg-blue-600 rounded-tl-lg cursor-se-resize flex items-center justify-center">
+                            <i class="bi bi-arrows-angle-expand text-white text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coordenadas en tiempo real -->
+            <div class="mt-4 flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+                <span class="bg-gray-100 px-3 py-1 rounded-lg"><i class="bi bi-geo-alt mr-1 text-blue-500"></i>X: <strong id="displayX" class="text-gray-800">0</strong></span>
+                <span class="bg-gray-100 px-3 py-1 rounded-lg"><i class="bi bi-geo-alt-fill mr-1 text-blue-500"></i>Y: <strong id="displayY" class="text-gray-800">0</strong></span>
+                <span class="bg-gray-100 px-3 py-1 rounded-lg"><i class="bi bi-arrows-expand mr-1 text-green-500"></i>Ancho: <strong id="displayW" class="text-gray-800">0</strong></span>
+                <span class="bg-gray-100 px-3 py-1 rounded-lg"><i class="bi bi-arrows-expand mr-1 text-green-500"></i>Alto: <strong id="displayH" class="text-gray-800">0</strong></span>
+            </div>
+        </div>
+
+        <!-- Campos ocultos de coordenadas -->
+        <input type="hidden" name="CoordX" id="coordX" value="0" />
+        <input type="hidden" name="CoordY" id="coordY" value="0" />
+        <input type="hidden" name="Ancho" id="ancho" value="0" />
+        <input type="hidden" name="Alto" id="alto" value="0" />
+
+        <!-- Resto del formulario -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="AnioAplicacion" class="block text-sm font-semibold text-gray-700 mb-2">Año de Aplicación</label>
+                <input asp-for="AnioAplicacion" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="2024" />
+                <span asp-validation-for="AnioAplicacion" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="MostrarEn" class="block text-sm font-semibold text-gray-700 mb-2">Mostrar En</label>
+                <select asp-for="MostrarEn" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Aceptacion">Aceptación</option>
+                    <option value="Termino">Término</option>
+                    <option value="Ambas">Ambas</option>
+                </select>
+                <span asp-validation-for="MostrarEn" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div>
+            <label asp-for="Posicion" class="block text-sm font-semibold text-gray-700 mb-2">Posición en el documento</label>
+            <select asp-for="Posicion" id="posicionSelect" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar --</option>
+                <option value="Fondo">De fondo (detrás del texto)</option>
+                <option value="Solida">Sólida (encima del texto)</option>
+            </select>
+            <span asp-validation-for="Posicion" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div id="opacidadContainer" style="display:none;">
+            <label asp-for="Opacidad" class="block text-sm font-semibold text-gray-700 mb-2">Opacidad: <span id="opacidadValue">100</span>%</label>
+            <input asp-for="Opacidad" type="range" min="0" max="100" value="100" id="opacidadSlider" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" />
+            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>Totalmente transparente</span>
+                <span>Normal (sin transparencia)</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="FechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Inicio</label>
+                <input asp-for="FechaInicio" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                <span asp-validation-for="FechaInicio" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="FechaFin" class="block text-sm font-semibold text-gray-700 mb-2">Fecha Fin</label>
+                <input asp-for="FechaFin" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                <span asp-validation-for="FechaFin" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                <i class="bi bi-check-lg mr-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    var imagenes = @Html.Raw(ViewBag.ImagenesJson);
+    var canvas = document.getElementById('pdfCanvas');
+    var imgEl = document.getElementById('imageElement');
+    var previewImg = document.getElementById('previewImg');
+    var previewLabel = document.getElementById('previewLabel');
+    var mapContainer = document.getElementById('mapContainer');
+    var resizeHandle = document.getElementById('resizeHandle');
+    var select = document.getElementById('imagenSelect');
+
+    select.addEventListener('change', function() {
+        if (this.value) {
+            mapContainer.classList.remove('hidden');
+            var selected = imagenes.find(function(i) { return i.id == parseInt(select.value); });
+            if (selected) {
+                previewLabel.textContent = selected.nombre;
+                var icon = document.getElementById('previewIcon');
+                if (selected.url && selected.url.length > 0) {
+                    previewImg.src = selected.url;
+                    previewImg.onload = function() {
+                        previewImg.classList.remove('hidden');
+                        icon.classList.add('hidden');
+                        previewLabel.classList.add('hidden');
+                    };
+                    previewImg.onerror = function() {
+                        previewImg.classList.add('hidden');
+                        icon.classList.remove('hidden');
+                        previewLabel.classList.remove('hidden');
+                    };
+                } else {
+                    previewImg.classList.add('hidden');
+                    icon.classList.remove('hidden');
+                    previewLabel.classList.remove('hidden');
+                }
+            }
+        } else {
+            mapContainer.classList.add('hidden');
+        }
+    });
+
+    // Cargar imagen si ya está seleccionada (re-render por error de validación)
+    if (select.value) {
+        var selected = imagenes.find(function(i) { return i.id == parseInt(select.value); });
+        if (selected) {
+            previewLabel.textContent = selected.nombre;
+            var icon = document.getElementById('previewIcon');
+            if (selected.url && selected.url.length > 0) {
+                previewImg.src = selected.url;
+                previewImg.onload = function() {
+                    previewImg.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                    previewLabel.classList.add('hidden');
+                };
+            }
+        }
+    }
+
+    var isDragging = false, isResizing = false;
+    var startX, startY, startLeft, startTop, startW, startH;
+
+    imgEl.addEventListener('mousedown', function(e) {
+        if (e.target === resizeHandle || resizeHandle.contains(e.target)) return;
+        isDragging = true;
+        startX = e.clientX; startY = e.clientY;
+        startLeft = imgEl.offsetLeft; startTop = imgEl.offsetTop;
+        e.preventDefault();
+    });
+
+    resizeHandle.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        startX = e.clientX; startY = e.clientY;
+        startW = imgEl.offsetWidth; startH = imgEl.offsetHeight;
+        e.preventDefault(); e.stopPropagation();
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            var dx = e.clientX - startX, dy = e.clientY - startY;
+            var newLeft = Math.max(0, Math.min(canvas.offsetWidth - imgEl.offsetWidth, startLeft + dx));
+            var newTop = Math.max(0, Math.min(canvas.offsetHeight - imgEl.offsetHeight, startTop + dy));
+            imgEl.style.left = newLeft + 'px'; imgEl.style.top = newTop + 'px';
+            updateCoords();
+        }
+        if (isResizing) {
+            var dx = e.clientX - startX, dy = e.clientY - startY;
+            var newW = Math.max(20, startW + dx);
+            var newH = Math.max(20, startH + dy);
+            imgEl.style.width = newW + 'px';
+            imgEl.style.height = newH + 'px';
+            updateCoords();
+        }
+    });
+
+    document.addEventListener('mouseup', function() { isDragging = false; isResizing = false; });
+
+    // Touch
+    imgEl.addEventListener('touchstart', function(e) {
+        if (e.target === resizeHandle || resizeHandle.contains(e.target)) return;
+        isDragging = true;
+        var t = e.touches[0];
+        startX = t.clientX; startY = t.clientY;
+        startLeft = imgEl.offsetLeft; startTop = imgEl.offsetTop;
+        e.preventDefault();
+    });
+    resizeHandle.addEventListener('touchstart', function(e) {
+        isResizing = true;
+        var t = e.touches[0];
+        startX = t.clientX; startY = t.clientY;
+        startW = imgEl.offsetWidth; startH = imgEl.offsetHeight;
+        e.preventDefault(); e.stopPropagation();
+    });
+    document.addEventListener('touchmove', function(e) {
+        var t = e.touches[0];
+        if (isDragging) {
+            var dx = t.clientX - startX, dy = t.clientY - startY;
+            imgEl.style.left = Math.max(0, Math.min(canvas.offsetWidth - imgEl.offsetWidth, startLeft + dx)) + 'px';
+            imgEl.style.top = Math.max(0, Math.min(canvas.offsetHeight - imgEl.offsetHeight, startTop + dy)) + 'px';
+            updateCoords();
+        }
+        if (isResizing) {
+            var dx = t.clientX - startX, dy = t.clientY - startY;
+            imgEl.style.width = Math.max(20, startW + dx) + 'px';
+            imgEl.style.height = Math.max(20, startH + dy) + 'px';
+            updateCoords();
+        }
+    });
+    document.addEventListener('touchend', function() { isDragging = false; isResizing = false; });
+
+    canvas.addEventListener('click', function(e) {
+        if (e.target === imgEl || imgEl.contains(e.target)) return;
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left - (imgEl.offsetWidth / 2);
+        var y = e.clientY - rect.top - (imgEl.offsetHeight / 2);
+        imgEl.style.left = Math.max(0, Math.min(canvas.offsetWidth - imgEl.offsetWidth, x)) + 'px';
+        imgEl.style.top = Math.max(0, Math.min(canvas.offsetHeight - imgEl.offsetHeight, y)) + 'px';
+        updateCoords();
+    });
+
+    function updateCoords() {
+        var rect = canvas.getBoundingClientRect();
+        var elRect = imgEl.getBoundingClientRect();
+        var x = ((elRect.left - rect.left) / rect.width * 100).toFixed(2);
+        var y = ((elRect.top - rect.top) / rect.height * 100).toFixed(2);
+        var w = (elRect.width / rect.width * 100).toFixed(2);
+        var h = (elRect.height / rect.height * 100).toFixed(2);
+        document.getElementById('coordX').value = x;
+        document.getElementById('coordY').value = y;
+        document.getElementById('ancho').value = w;
+        document.getElementById('alto').value = h;
+        document.getElementById('displayX').textContent = x + '%';
+        document.getElementById('displayY').textContent = y + '%';
+        document.getElementById('displayW').textContent = w + '%';
+        document.getElementById('displayH').textContent = h + '%';
+    }
+    updateCoords();
+
+    // Opacidad slider
+    var posSelect = document.getElementById('posicionSelect');
+    var opacidadContainer = document.getElementById('opacidadContainer');
+    var opacidadSlider = document.getElementById('opacidadSlider');
+    var opacidadValue = document.getElementById('opacidadValue');
+
+    posSelect.addEventListener('change', function() {
+        opacidadContainer.style.display = this.value === 'Fondo' ? 'block' : 'none';
+    });
+    if (posSelect.value === 'Fondo') opacidadContainer.style.display = 'block';
+
+    opacidadSlider.addEventListener('input', function() {
+        opacidadValue.textContent = this.value;
+        imgEl.style.opacity = this.value / 100;
+    });
+})();
+</script>
+}
