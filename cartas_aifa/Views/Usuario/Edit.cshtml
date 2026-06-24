@@ -28,12 +28,17 @@
 
         <div>
             <label asp-for="Rol" class="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
-            <input asp-for="Rol" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+            <select asp-for="Rol" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                <option value="">-- Seleccionar rol --</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Estudiante">Estudiante</option>
+                <option value="Directivo">Directivo</option>
+            </select>
             <span asp-validation-for="Rol" class="text-red-500 text-sm"></span>
         </div>
 
         <div class="flex items-center gap-4 pt-4">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
+            <button type="submit" class="bg-[#001f3f] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#001530] transition-colors shadow-sm">
                 <i class="bi bi-check-lg mr-1"></i> Guardar
             </button>
             <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>

@@ -3,59 +3,241 @@
     ViewData["Title"] = "Crear Trámite";
 }
 
-<div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-plus-circle mr-2"></i>Crear Trámite Académico</h2>
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-plus-circle mr-2"></i><span>Crear Trámite Académico</span></h2>
 
-    <form asp-action="Create" method="post" class="space-y-6">
-        <div>
-            <label asp-for="Folio" class="block text-sm font-semibold text-gray-700 mb-2">Folio</label>
-            <input asp-for="Folio" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Folio del trámite" />
-            <span asp-validation-for="Folio" class="text-red-500 text-sm"></span>
+    <form id="formTramiteMasivo" asp-action="CrearMasivo" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+
+        <!-- Configuración general (se aplica a todos) -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;">
+            <h3 class="text-sm font-bold text-gray-500 uppercase mb-4"><i class="bi bi-gear mr-1"></i> Configuración general</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Autoridad</label>
+                    <select name="IdAut" id="selectAutoridad" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach (var item in (SelectList)ViewBag.IdAut)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Carta</label>
+                    <select name="IdTipoCarta" id="selectTipoCarta" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach (var item in (SelectList)ViewBag.IdTipoCarta)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha del documento</label>
+                    <input type="date" name="FechaDocumento" id="inputFechaDocumento" style="background:#f0fdf4;border:1px solid #bbf7d0;" class="w-full px-4 py-3 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha inicio (periodo)</label>
+                    <input type="date" name="FechaInicioPeriodo" id="inputFechaInicio" style="background:#f0fdf4;border:1px solid #bbf7d0;" class="w-full px-4 py-3 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha fin (periodo)</label>
+                    <input type="date" name="FechaFinPeriodo" id="inputFechaFin" style="background:#f0fdf4;border:1px solid #bbf7d0;" class="w-full px-4 py-3 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Total de horas</label>
+                    <input type="number" name="TotalHoras" id="inputHoras" min="1" placeholder="200" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label asp-for="IdEstudiante" class="block text-sm font-semibold text-gray-700 mb-2">Estudiante</label>
-            <select asp-for="IdEstudiante" asp-items="@((SelectList)ViewBag.IdEstudiante)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar --</option>
-            </select>
-            <span asp-validation-for="IdEstudiante" class="text-red-500 text-sm"></span>
-        </div>
+        <!-- Filtro de estudiantes -->
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;">
+            <h3 class="text-sm font-bold text-gray-500 uppercase mb-4"><i class="bi bi-funnel mr-1"></i> Filtrar estudiantes</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Universidad</label>
+                    <select id="filtroUniversidad" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                        <option value="">Todas</option>
+                        @foreach (var item in (SelectList)ViewBag.Universidades)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Facultad</label>
+                    <select id="filtroFacultad" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Buscar</label>
+                    <input type="text" id="filtroBuscar" placeholder="Nombre, matrícula..." class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none" />
+                </div>
+            </div>
 
-        <div>
-            <label asp-for="IdDetalleEtapa" class="block text-sm font-semibold text-gray-700 mb-2">Detalle Etapa</label>
-            <select asp-for="IdDetalleEtapa" asp-items="@((SelectList)ViewBag.IdDetalleEtapa)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar --</option>
-            </select>
-            <span asp-validation-for="IdDetalleEtapa" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="IdAut" class="block text-sm font-semibold text-gray-700 mb-2">Autoridad</label>
-            <select asp-for="IdAut" asp-items="@((SelectList)ViewBag.IdAut)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar --</option>
-            </select>
-            <span asp-validation-for="IdAut" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="IdTipoCarta" class="block text-sm font-semibold text-gray-700 mb-2">Tipo de Carta</label>
-            <select asp-for="IdTipoCarta" asp-items="@((SelectList)ViewBag.IdTipoCarta)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar --</option>
-            </select>
-            <span asp-validation-for="IdTipoCarta" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="FechaRegistro" class="block text-sm font-semibold text-gray-700 mb-2">Fecha de Registro</label>
-            <input asp-for="FechaRegistro" type="date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
-            <span asp-validation-for="FechaRegistro" class="text-red-500 text-sm"></span>
+            <!-- Checklist de estudiantes -->
+            <div style="max-height:400px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:12px;">
+                <table class="w-full text-left text-sm">
+                    <thead style="position:sticky;top:0;background:#f1f5f9;z-index:1;">
+                        <tr>
+                            <th style="padding:10px 12px;width:40px;">
+                                <input type="checkbox" id="checkTodos" title="Seleccionar todos" style="width:16px;height:16px;cursor:pointer;" />
+                            </th>
+                            <th style="padding:10px 12px;">Estudiante</th>
+                            <th style="padding:10px 12px;">Matrícula</th>
+                            <th style="padding:10px 12px;">Universidad</th>
+                            <th style="padding:10px 12px;">Facultad</th>
+                            <th style="padding:10px 12px;">Etapa</th>
+                            <th style="padding:10px 12px;min-width:140px;">Folio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaEstudiantes">
+                        @{
+                            var estudiantes = (IEnumerable<Estudiante>)ViewBag.Estudiantes;
+                        }
+                        @foreach (var est in estudiantes)
+                        {
+                            <tr class="fila-estudiante hover:bg-blue-50" 
+                                data-universidad="@est.Facultad?.Universidad?.Id"
+                                data-facultad="@est.IdF"
+                                data-nombre="@est.NombreCompleto.ToLower()"
+                                data-matricula="@est.Matricula.ToLower()">
+                                <td style="padding:8px 12px;">
+                                    <input type="checkbox" class="check-estudiante" name="Seleccionados" value="@est.Id" style="width:16px;height:16px;cursor:pointer;" />
+                                </td>
+                                <td style="padding:8px 12px;font-weight:600;">@est.NombreCompleto</td>
+                                <td style="padding:8px 12px;color:#64748b;">@est.Matricula</td>
+                                <td style="padding:8px 12px;color:#64748b;font-size:0.75rem;">@(est.Facultad?.Universidad?.NombreU ?? "-")</td>
+                                <td style="padding:8px 12px;color:#64748b;font-size:0.75rem;">@(est.Facultad?.NombreF ?? "-")</td>
+                                <td style="padding:8px 12px;color:#64748b;font-size:0.75rem;">@(est.DetalleEtapa?.TipoEtapa ?? "-")</td>
+                                <td style="padding:8px 12px;">
+                                    <input type="text" name="Folios_@est.Id" placeholder="Folio" class="input-folio w-full px-2 py-1 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" disabled />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;" id="contadorSeleccion">0 estudiantes seleccionados</p>
         </div>
 
         <div class="flex items-center gap-4 pt-4">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
-                <i class="bi bi-check-lg mr-1"></i> Guardar
+            <button type="submit" id="btnGuardar" style="background:#001f3f;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);opacity:0.5;pointer-events:none;">
+                <i class="bi bi-check-lg"></i> Crear Trámites
             </button>
             <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+<script>
+    var checkTodos = document.getElementById('checkTodos');
+    var filas = document.querySelectorAll('.fila-estudiante');
+    var filtroUni = document.getElementById('filtroUniversidad');
+    var filtroFac = document.getElementById('filtroFacultad');
+    var filtroBuscar = document.getElementById('filtroBuscar');
+    var btnGuardar = document.getElementById('btnGuardar');
+
+    // Filtrar por universidad -> cargar facultades
+    filtroUni.addEventListener('change', function() {
+        var idUni = this.value;
+        filtroFac.innerHTML = '<option value="">Todas</option>';
+        if (idUni) {
+            fetch('/Estudiante/GetFacultadesPorUniversidad?idUniversidad=' + idUni)
+                .then(r => r.json())
+                .then(data => {
+                    data.forEach(f => {
+                        filtroFac.innerHTML += '<option value="' + f.id + '">' + f.nombreF + '</option>';
+                    });
+                });
+        }
+        filtrarEstudiantes();
+    });
+
+    filtroFac.addEventListener('change', filtrarEstudiantes);
+    filtroBuscar.addEventListener('input', filtrarEstudiantes);
+
+    function filtrarEstudiantes() {
+        var uni = filtroUni.value;
+        var fac = filtroFac.value;
+        var texto = filtroBuscar.value.toLowerCase();
+
+        filas.forEach(function(fila) {
+            var matchUni = !uni || fila.getAttribute('data-universidad') === uni;
+            var matchFac = !fac || fila.getAttribute('data-facultad') === fac;
+            var matchTexto = !texto || fila.getAttribute('data-nombre').indexOf(texto) !== -1 || fila.getAttribute('data-matricula').indexOf(texto) !== -1;
+            fila.style.display = (matchUni && matchFac && matchTexto) ? '' : 'none';
+        });
+    }
+
+    // Check todos (solo los visibles)
+    checkTodos.addEventListener('change', function() {
+        var checked = this.checked;
+        filas.forEach(function(fila) {
+            if (fila.style.display !== 'none') {
+                var cb = fila.querySelector('.check-estudiante');
+                cb.checked = checked;
+                actualizarFolio(fila, checked);
+            }
+        });
+        actualizarContador();
+    });
+
+    // Check individual
+    document.querySelectorAll('.check-estudiante').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var fila = this.closest('tr');
+            actualizarFolio(fila, this.checked);
+            actualizarContador();
+        });
+    });
+
+    function actualizarFolio(fila, habilitado) {
+        var input = fila.querySelector('.input-folio');
+        input.disabled = !habilitado;
+        if (!habilitado) input.value = '';
+        input.style.background = habilitado ? '#fff' : '#f8fafc';
+    }
+
+    function actualizarContador() {
+        var seleccionados = document.querySelectorAll('.check-estudiante:checked').length;
+        document.getElementById('contadorSeleccion').textContent = seleccionados + ' estudiante' + (seleccionados !== 1 ? 's' : '') + ' seleccionado' + (seleccionados !== 1 ? 's' : '');
+        btnGuardar.style.opacity = seleccionados > 0 ? '1' : '0.5';
+        btnGuardar.style.pointerEvents = seleccionados > 0 ? 'auto' : 'none';
+    }
+
+    // Validar antes de enviar
+    document.getElementById('formTramiteMasivo').addEventListener('submit', function(e) {
+        var autoridad = document.getElementById('selectAutoridad').value;
+        var tipoCarta = document.getElementById('selectTipoCarta').value;
+        if (!autoridad || !tipoCarta) {
+            e.preventDefault();
+            alert('Selecciona Autoridad y Tipo de Carta.');
+            return;
+        }
+        var seleccionados = document.querySelectorAll('.check-estudiante:checked');
+        if (seleccionados.length === 0) {
+            e.preventDefault();
+            alert('Selecciona al menos un estudiante.');
+            return;
+        }
+        // Verificar folios
+        var sinFolio = [];
+        seleccionados.forEach(function(cb) {
+            var fila = cb.closest('tr');
+            var folio = fila.querySelector('.input-folio').value.trim();
+            if (!folio) sinFolio.push(fila.querySelector('td:nth-child(2)').textContent.trim());
+        });
+        if (sinFolio.length > 0) {
+            e.preventDefault();
+            alert('Falta el folio para: ' + sinFolio.join(', '));
+        }
+    });
+</script>
+}

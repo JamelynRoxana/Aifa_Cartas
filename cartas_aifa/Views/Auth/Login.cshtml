@@ -242,6 +242,9 @@
             <div class="divider">
                 <a href="/Auth/ForgotPassword">¿Olvidaste tu contraseña?</a>
             </div>
+            <div class="divider" style="margin-top: 0.8rem; padding-top: 0.8rem;">
+                <a href="/Auth/LoginCodigo" style="color: #0074d9;"><i class="bi bi-key mr-1"></i>Ingresar con código de estudiante</a>
+            </div>
         </div>
     </div>
 
@@ -278,8 +281,11 @@
                     success: function (response) {
                         localStorage.setItem('jwt_token', response.token);
                         localStorage.setItem('user_name', response.nombre || '');
+                        localStorage.setItem('user_rol', response.rol || '');
                         if (response.requiereCambio) {
                             window.location.href = '/Auth/CambiarContrasena';
+                        } else if (response.rol === 'Estudiante') {
+                            window.location.href = '/Estudiante/Create';
                         } else {
                             window.location.href = '/';
                         }

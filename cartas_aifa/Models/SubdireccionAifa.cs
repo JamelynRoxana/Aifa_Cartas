@@ -9,12 +9,12 @@ public class SubdireccionAifa
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public int IdDir { get; set; }
 
     [ForeignKey("IdDir")]
     public DireccionAifa? Direccion { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string NombreSub { get; set; } = string.Empty;
 }

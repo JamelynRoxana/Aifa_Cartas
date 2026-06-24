@@ -29,7 +29,7 @@ public class DetallesTipoCartaController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(DetallesTipoCarta item)
     {
-        if (ModelState.IsValid) { _db.DetallesTipoCartas.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.DetallesTipoCartas.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdEtapa = new SelectList(await _db.DetallesEtapas.ToListAsync(), "Id", "TipoEtapa");
         return View(item);
     }
@@ -47,7 +47,7 @@ public class DetallesTipoCartaController : Controller
     public async Task<IActionResult> Edit(int id, DetallesTipoCarta item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdEtapa = new SelectList(await _db.DetallesEtapas.ToListAsync(), "Id", "TipoEtapa");
         return View(item);
     }
@@ -64,6 +64,7 @@ public class DetallesTipoCartaController : Controller
     {
         var item = await _db.DetallesTipoCartas.FindAsync(id);
         if (item != null) { _db.DetallesTipoCartas.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

@@ -56,6 +56,7 @@ public class ImagenCatalogoController : Controller
 
             _db.ImagenesCatalogo.Add(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro creado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         return View(item);
@@ -103,6 +104,7 @@ public class ImagenCatalogoController : Controller
 
             _db.Update(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro actualizado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         return View(item);
@@ -132,6 +134,7 @@ public class ImagenCatalogoController : Controller
             _db.ImagenesCatalogo.Remove(item);
             await _db.SaveChangesAsync();
         }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

@@ -21,4 +21,22 @@ public class AuthController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult LoginCodigo()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult RegistroEstudiante()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult MiPerfil()
+    {
+        return View();
+    }
 }

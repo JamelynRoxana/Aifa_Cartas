@@ -1,0 +1,225 @@
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div style="max-width:600px;margin:0 auto;">
+    <div style="margin-bottom:2rem;">
+        <h2 style="font-size:1.8rem;font-weight:800;color:#001f3f;margin-bottom:0.2rem;">
+            <i class="bi bi-person-circle mr-2"></i>Mi Perfil
+        </h2>
+        <p style="color:#64748b;font-size:0.85rem;">Información de tu cuenta</p>
+    </div>
+
+    <!-- Info del usuario -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.03);margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #f1f5f9;">
+            <div style="position:relative;cursor:pointer;" onclick="abrirSelectorAvatar()">
+                <div id="avatarBox" style="width:64px;height:64px;background:#001f3f;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;border:3px solid #e2e8f0;">
+                    <i class="bi bi-person-fill" id="avatarIcon" style="color:#fff;font-size:1.5rem;"></i>
+                    <img id="avatarImg" src="" style="width:100%;height:100%;object-fit:cover;display:none;" />
+                </div>
+                <div style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;background:#001f3f;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
+                    <i class="bi bi-pencil-fill" style="color:#fff;font-size:0.55rem;"></i>
+                </div>
+            </div>
+            <div>
+                <p id="perfilNombre" style="font-size:1.1rem;font-weight:700;color:#0f172a;margin:0;">Cargando...</p>
+                <p id="perfilRol" style="font-size:0.8rem;color:#64748b;margin:0;"></p>
+                <p style="font-size:0.7rem;color:#94a3b8;margin:2px 0 0;">Click en la imagen para cambiar avatar</p>
+            </div>
+        </div>
+        <div style="display:grid;gap:1rem;">
+            <div>
+                <label style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Nombre</label>
+                <p id="perfilNombreCompleto" style="font-size:0.95rem;color:#0f172a;font-weight:500;margin:4px 0 0;">-</p>
+            </div>
+            <div>
+                <label style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Correo electrónico</label>
+                <p id="perfilCorreo" style="font-size:0.95rem;color:#0f172a;font-weight:500;margin:4px 0 0;">-</p>
+            </div>
+            <div>
+                <label style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Rol</label>
+                <p id="perfilRolCompleto" style="font-size:0.95rem;color:#0f172a;font-weight:500;margin:4px 0 0;">-</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cambiar correo -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.03);margin-bottom:1.5rem;">
+        <h3 style="font-size:0.9rem;font-weight:700;color:#001f3f;margin-bottom:1rem;">
+            <i class="bi bi-envelope mr-2"></i>Cambiar correo
+        </h3>
+        <div style="margin-bottom:1rem;">
+            <input type="email" id="nuevoCorreo" placeholder="Nuevo correo electrónico"
+                   style="width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;" />
+        </div>
+        <button onclick="cambiarCorreo()" style="background:#001f3f;color:#fff;padding:10px 20px;border-radius:10px;font-weight:600;font-size:0.85rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+            <i class="bi bi-check-lg"></i> Actualizar correo
+        </button>
+    </div>
+
+    <!-- Cambiar contraseña -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+        <h3 style="font-size:0.9rem;font-weight:700;color:#001f3f;margin-bottom:1rem;">
+            <i class="bi bi-lock mr-2"></i>Cambiar contraseña
+        </h3>
+        <div style="display:grid;gap:0.75rem;margin-bottom:1rem;">
+            <input type="password" id="nuevaContrasena" placeholder="Nueva contraseña (mín. 6 caracteres)"
+                   style="width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;" />
+            <input type="password" id="confirmarContrasena" placeholder="Confirmar contraseña"
+                   style="width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;" />
+        </div>
+        <button onclick="cambiarContrasena()" style="background:#001f3f;color:#fff;padding:10px 20px;border-radius:10px;font-weight:600;font-size:0.85rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+            <i class="bi bi-check-lg"></i> Actualizar contraseña
+        </button>
+    </div>
+</div>
+
+<!-- Modal Selector de Avatar -->
+<div id="avatarModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:20px;padding:2rem;max-width:480px;width:90%;max-height:85vh;overflow-y:auto;">
+        <h3 style="font-size:1.1rem;font-weight:700;color:#001f3f;margin-bottom:0.5rem;text-align:center;">Elige tu avatar</h3>
+        <p style="text-align:center;color:#64748b;font-size:0.8rem;margin-bottom:1.5rem;">Selecciona una imagen de perfil</p>
+        <div id="avatarGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;"></div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:1.5rem;">
+            <button onclick="cerrarSelectorAvatar()" style="background:#f1f5f9;color:#64748b;padding:10px 20px;border-radius:10px;font-weight:600;font-size:0.85rem;border:1px solid #e2e8f0;cursor:pointer;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Cargar datos del perfil desde JWT
+    (function() {
+        var token = localStorage.getItem('jwt_token');
+        var nombre = localStorage.getItem('user_name') || 'Usuario';
+        var rol = localStorage.getItem('user_rol') || '';
+        var correo = '';
+
+        if (token) {
+            try {
+                var payload = JSON.parse(atob(token.split('.')[1]));
+                correo = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '';
+            } catch(e) {}
+        }
+
+        var formatted = nombre.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+        document.getElementById('perfilNombre').textContent = formatted;
+        document.getElementById('perfilNombreCompleto').textContent = formatted;
+        document.getElementById('perfilRol').textContent = rol;
+        document.getElementById('perfilRolCompleto').textContent = rol;
+        document.getElementById('perfilCorreo').textContent = correo || nombre;
+        if (correo) document.getElementById('nuevoCorreo').value = correo;
+    })();
+
+    function cambiarContrasena() {
+        var nueva = document.getElementById('nuevaContrasena').value;
+        var confirmar = document.getElementById('confirmarContrasena').value;
+        if (!nueva || nueva.length < 6) { alert('La contraseña debe tener al menos 6 caracteres.'); return; }
+        if (nueva !== confirmar) { alert('Las contraseñas no coinciden.'); return; }
+
+        $.ajax({
+            url: '/api/auth/CambiarContrasena',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') },
+            data: JSON.stringify({ NuevaContrasena: nueva }),
+            success: function(r) {
+                mostrarAlerta('Contraseña actualizada exitosamente.', 'exito');
+                document.getElementById('nuevaContrasena').value = '';
+                document.getElementById('confirmarContrasena').value = '';
+            },
+            error: function(xhr) {
+                var msg = xhr.responseJSON?.message || 'Error al cambiar contraseña.';
+                mostrarAlerta(msg, 'error');
+            }
+        });
+    }
+
+    function cambiarCorreo() {
+        var nuevo = document.getElementById('nuevoCorreo').value.trim();
+        if (!nuevo || !nuevo.includes('@@')) { alert('Ingresa un correo válido.'); return; }
+
+        $.ajax({
+            url: '/api/auth/CambiarCorreo',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') },
+            data: JSON.stringify({ NuevoCorreo: nuevo }),
+            success: function(r) {
+                mostrarAlerta('Correo actualizado exitosamente.', 'exito');
+            },
+            error: function(xhr) {
+                var msg = xhr.responseJSON?.message || 'Error al cambiar correo.';
+                mostrarAlerta(msg, 'error');
+            }
+        });
+    }
+
+    // Avatares predeterminados (DiceBear API)
+    var avatarStyles = ['adventurer', 'avataaars', 'big-ears', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'miniavs', 'personas', 'pixel-art', 'thumbs', 'open-peeps'];
+    var avatarSeeds = ['felix', 'luna', 'max', 'bella', 'rocky', 'chloe', 'leo', 'mia', 'oscar', 'sophie', 'alex', 'nora', 'sam', 'lily', 'jack', 'emma'];
+
+    function abrirSelectorAvatar() {
+        var grid = document.getElementById('avatarGrid');
+        grid.innerHTML = '';
+        // Generar 16 avatares variados
+        for (var i = 0; i < 16; i++) {
+            var style = avatarStyles[i % avatarStyles.length];
+            var seed = avatarSeeds[i];
+            var url = 'https://api.dicebear.com/7.x/' + style + '/svg?seed=' + seed;
+            var div = document.createElement('div');
+            div.style.cssText = 'cursor:pointer;border-radius:50%;overflow:hidden;border:3px solid transparent;transition:all 0.2s;aspect-ratio:1;';
+            div.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;" />';
+            div.setAttribute('data-url', url);
+            div.onmouseover = function() { this.style.borderColor = '#001f3f'; this.style.transform = 'scale(1.1)'; };
+            div.onmouseout = function() { this.style.borderColor = 'transparent'; this.style.transform = 'scale(1)'; };
+            div.onclick = function() { seleccionarAvatar(this.getAttribute('data-url')); };
+            grid.appendChild(div);
+        }
+        document.getElementById('avatarModal').style.display = 'flex';
+    }
+
+    function cerrarSelectorAvatar() {
+        document.getElementById('avatarModal').style.display = 'none';
+    }
+
+    function seleccionarAvatar(url) {
+        // Guardar en servidor
+        $.ajax({
+            url: '/api/auth/CambiarAvatar',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') },
+            data: JSON.stringify({ AvatarUrl: url }),
+            success: function(r) {
+                document.getElementById('avatarImg').src = url;
+                document.getElementById('avatarImg').style.display = 'block';
+                document.getElementById('avatarIcon').style.display = 'none';
+                localStorage.setItem('user_avatar', url);
+                cerrarSelectorAvatar();
+                mostrarAlerta('Avatar actualizado.', 'exito');
+            },
+            error: function() {
+                // Guardar solo en localStorage si falla el server
+                document.getElementById('avatarImg').src = url;
+                document.getElementById('avatarImg').style.display = 'block';
+                document.getElementById('avatarIcon').style.display = 'none';
+                localStorage.setItem('user_avatar', url);
+                cerrarSelectorAvatar();
+                mostrarAlerta('Avatar actualizado.', 'exito');
+            }
+        });
+    }
+
+    // Cargar avatar guardado
+    var savedAvatar = localStorage.getItem('user_avatar');
+    if (savedAvatar) {
+        document.getElementById('avatarImg').src = savedAvatar;
+        document.getElementById('avatarImg').style.display = 'block';
+        document.getElementById('avatarIcon').style.display = 'none';
+    }
+</script>
+}

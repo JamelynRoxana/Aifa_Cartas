@@ -44,7 +44,7 @@ public class FacultadsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Facultad item)
     {
-        if (ModelState.IsValid) { _db.Facultades.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Facultades.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdU = new SelectList(await _db.Universidades.ToListAsync(), "Id", "NombreU");
         return View(item);
     }
@@ -62,7 +62,7 @@ public class FacultadsController : Controller
     public async Task<IActionResult> Edit(int id, Facultad item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdU = new SelectList(await _db.Universidades.ToListAsync(), "Id", "NombreU");
         return View(item);
     }
@@ -79,6 +79,7 @@ public class FacultadsController : Controller
     {
         var item = await _db.Facultades.FindAsync(id);
         if (item != null) { _db.Facultades.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

@@ -24,7 +24,7 @@ public class AutoridadCartasController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AutoridadCarta item)
     {
-        if (ModelState.IsValid) { _db.AutoridadesAifa.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.AutoridadesAifa.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -39,7 +39,7 @@ public class AutoridadCartasController : Controller
     public async Task<IActionResult> Edit(int id, AutoridadCarta item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -55,6 +55,7 @@ public class AutoridadCartasController : Controller
     {
         var item = await _db.AutoridadesAifa.FindAsync(id);
         if (item != null) { _db.AutoridadesAifa.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

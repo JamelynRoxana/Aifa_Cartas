@@ -9,6 +9,6 @@ public class DireccionAifa
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string NombreDir { get; set; } = string.Empty;
 }

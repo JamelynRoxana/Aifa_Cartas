@@ -46,7 +46,7 @@ public class DirectorEscolarController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(DirectorEscolar item)
     {
-        if (ModelState.IsValid) { _db.DirectoresEscolares.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.DirectoresEscolares.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         var facultad = await _db.Facultades.Include(f => f.Universidad).FirstOrDefaultAsync(f => f.Id == item.IdF);
         ViewBag.Universidades = new SelectList(await _db.Universidades.ToListAsync(), "Id", "NombreU", facultad?.IdU);
         ViewBag.IdF = new SelectList(await _db.Facultades.Where(f => f.IdU == (facultad != null ? facultad.IdU : 0)).ToListAsync(), "Id", "NombreF");
@@ -79,7 +79,7 @@ public class DirectorEscolarController : Controller
     public async Task<IActionResult> Edit(int id, DirectorEscolar item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         var facultad = await _db.Facultades.Include(f => f.Universidad).FirstOrDefaultAsync(f => f.Id == item.IdF);
         var idUniversidad = facultad?.IdU ?? 0;
         ViewBag.Universidades = new SelectList(await _db.Universidades.ToListAsync(), "Id", "NombreU", idUniversidad);
@@ -100,6 +100,7 @@ public class DirectorEscolarController : Controller
     {
         var item = await _db.DirectoresEscolares.FindAsync(id);
         if (item != null) { _db.DirectoresEscolares.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

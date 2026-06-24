@@ -1,0 +1,178 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Registro de Cuenta Estudiante";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4f8;
+            padding: 1rem;
+        }
+        .card {
+            width: 100%;
+            max-width: 440px;
+            background: #fff;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+        .card .icon-box { width: 56px; height: 56px; background: #ecfdf5; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+        .card .icon-box i { font-size: 1.5rem; color: #059669; }
+        .card h2 { font-size: 1.4rem; font-weight: 800; color: #001f3f; margin-bottom: 0.4rem; }
+        .card .subtitle { color: #6b7c93; font-size: 0.85rem; margin-bottom: 2rem; line-height: 1.5; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7c93; margin-bottom: 0.5rem; }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #f7f9fc;
+            border: 1.5px solid #e8edf3;
+            border-radius: 12px;
+            color: #001f3f;
+            font-size: 0.9rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input:focus { border-color: #a2e3c4; background: #fff; box-shadow: 0 0 0 4px rgba(162,227,196,0.15); }
+        .form-group input::placeholder { color: #b8c5d3; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #059669;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 16px rgba(5,150,105,0.2);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-submit:hover { background: #047857; transform: translateY(-1px); }
+        .btn-submit:disabled { opacity: 0.7; cursor: wait; }
+        .btn-submit .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        .msg-box { display: none; padding: 12px 16px; border-radius: 12px; margin-bottom: 1rem; align-items: center; gap: 10px; font-size: 0.82rem; font-weight: 600; }
+        .msg-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .msg-box.show { display: flex; }
+
+        .step-badge { display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; color: #059669; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+    </style>
+
+    <script>
+        if (!sessionStorage.getItem('codigo_validado')) {
+            window.location.replace('/Auth/LoginCodigo');
+        }
+    </script>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-box"><i class="bi bi-person-plus"></i></div>
+        <span class="step-badge"><i class="bi bi-check-circle-fill"></i> Código verificado</span>
+        <h2>Crear tu cuenta</h2>
+        <p class="subtitle">Completa tus datos para crear tu cuenta de estudiante.</p>
+
+        <div class="msg-box" id="msgBox">
+            <i class="bi bi-exclamation-circle"></i>
+            <span id="msgText"></span>
+        </div>
+
+        <form id="registroForm">
+            <div class="form-group">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" required placeholder="Tu nombre completo" />
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo electrónico</label>
+                <input type="email" id="correo" required placeholder="tu_correo@@gmail.com" />
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" required placeholder="Mínimo 6 caracteres" minlength="6" />
+            </div>
+
+            <div class="form-group">
+                <label for="confirmar">Confirmar contraseña</label>
+                <input type="password" id="confirmar" required placeholder="Repite la contraseña" minlength="6" />
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-submit">
+                <span id="btn-text">Crear cuenta</span>
+                <i class="bi bi-arrow-right" id="btn-icon"></i>
+                <div class="spinner" id="btn-spinner"></div>
+            </button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('#registroForm').submit(function(e) {
+            e.preventDefault();
+
+            if ($('#contrasena').val() !== $('#confirmar').val()) {
+                $('#msgText').text('Las contraseñas no coinciden.');
+                $('#msgBox').addClass('show');
+                return;
+            }
+
+            $('#msgBox').removeClass('show');
+            $('#btn-submit').prop('disabled', true);
+            $('#btn-text').text('Creando cuenta...');
+            $('#btn-icon').hide();
+            $('#btn-spinner').show();
+
+            $.ajax({
+                url: '/api/auth/RegistrarEstudiante',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    Nombre: $('#nombre').val(),
+                    Correo: $('#correo').val(),
+                    Contrasena: $('#contrasena').val()
+                }),
+                success: function(response) {
+                    sessionStorage.removeItem('codigo_validado');
+                    localStorage.setItem('jwt_token', response.token);
+                    localStorage.setItem('user_name', response.nombre || '');
+                    localStorage.setItem('user_rol', 'Estudiante');
+                    window.location.href = '/Estudiante/Create';
+                },
+                error: function(xhr) {
+                    var msg = 'Error al crear la cuenta.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                    if (xhr.responseJSON && xhr.responseJSON.Message) msg = xhr.responseJSON.Message;
+                    $('#msgText').text(msg);
+                    $('#msgBox').addClass('show');
+                    $('#btn-submit').prop('disabled', false);
+                    $('#btn-text').text('Crear cuenta');
+                    $('#btn-icon').show();
+                    $('#btn-spinner').hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -31,7 +31,7 @@ public class PiePaginaController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(PiePagina item)
     {
-        if (ModelState.IsValid) { _db.PiesDePagina.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.PiesDePagina.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -46,7 +46,7 @@ public class PiePaginaController : Controller
     public async Task<IActionResult> Edit(int id, PiePagina item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -62,6 +62,7 @@ public class PiePaginaController : Controller
     {
         var item = await _db.PiesDePagina.FindAsync(id);
         if (item != null) { _db.PiesDePagina.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

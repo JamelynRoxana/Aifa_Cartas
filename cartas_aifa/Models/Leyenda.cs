@@ -9,18 +9,18 @@ public class Leyenda
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string Texto { get; set; } = string.Empty;
 
     /// <summary>Centrado, Izquierda, Derecha</summary>
     public string? Alineacion { get; set; }
 
     /// <summary>Porcentaje X (0-100)</summary>
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public decimal CoordX { get; set; }
 
     /// <summary>Porcentaje Y (0-100)</summary>
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public decimal CoordY { get; set; }
 
     /// <summary>Tamaño de fuente en puntos</summary>
@@ -32,9 +32,9 @@ public class Leyenda
     /// <summary>Aceptacion, Termino, Ambas</summary>
     public string? MostrarEn { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaInicio { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaFin { get; set; }
 }

@@ -34,7 +34,7 @@ public class DireccionAifaController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(DireccionAifa item)
     {
-        if (ModelState.IsValid) { _db.DireccionesAifa.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.DireccionesAifa.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -49,7 +49,7 @@ public class DireccionAifaController : Controller
     public async Task<IActionResult> Edit(int id, DireccionAifa item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -65,6 +65,7 @@ public class DireccionAifaController : Controller
     {
         var item = await _db.DireccionesAifa.FindAsync(id);
         if (item != null) { _db.DireccionesAifa.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

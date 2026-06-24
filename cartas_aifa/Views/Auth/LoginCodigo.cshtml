@@ -1,0 +1,286 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Acceso Estudiante";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4f8;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0,31,63,0.04) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(162,227,196,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #fff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.04);
+            position: relative;
+            z-index: 10;
+            min-height: 560px;
+        }
+
+        /* Panel izquierdo */
+        .left-panel {
+            background: linear-gradient(160deg, #001f3f 0%, #0c3d6e 100%);
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(162,227,196,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -40px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0,116,217,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .left-panel .content { position: relative; z-index: 2; }
+        .left-panel img { height: 48px; margin-bottom: 2.5rem; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .left-panel h1 { color: #fff; font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; }
+        .left-panel h1 span { color: #a2e3c4; }
+        .left-panel p { color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; max-width: 280px; margin-top: 1rem; }
+        .left-panel .footer { position: relative; z-index: 2; color: rgba(255,255,255,0.3); font-size: 0.7rem; letter-spacing: 0.05em; }
+        .left-panel .deco-icon { position: absolute; bottom: 20px; right: 20px; font-size: 8rem; color: rgba(255,255,255,0.02); z-index: 1; }
+
+        /* Panel derecho */
+        .right-panel {
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .right-panel h2 { font-size: 1.6rem; font-weight: 800; color: #001f3f; margin-bottom: 0.3rem; }
+        .right-panel .subtitle { color: #6b7c93; font-size: 0.85rem; margin-bottom: 2rem; line-height: 1.5; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7c93; margin-bottom: 0.5rem; margin-left: 2px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i.icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #a0aec0; font-size: 1.1rem; transition: color 0.3s; }
+        .input-wrapper input {
+            width: 100%;
+            padding: 15px 15px 15px 48px;
+            background: #f7f9fc;
+            border: 1.5px solid #e8edf3;
+            border-radius: 14px;
+            color: #001f3f;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .input-wrapper input::placeholder { color: #b8c5d3; letter-spacing: 3px; font-size: 0.9rem; font-weight: 400; }
+        .input-wrapper input:focus { border-color: #a2e3c4; background: #fff; box-shadow: 0 0 0 4px rgba(162,227,196,0.15); }
+        .input-wrapper input:focus ~ i.icon { color: #001f3f; }
+
+        /* Button */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: #001f3f;
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,31,63,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 0.75rem;
+        }
+        .btn-submit:hover { background: #001730; box-shadow: 0 12px 28px rgba(0,31,63,0.3); transform: translateY(-1px); }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { opacity: 0.7; cursor: wait; }
+        .btn-submit .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #a2e3c4; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Messages */
+        .msg-box { display: none; padding: 12px 16px; border-radius: 12px; margin-bottom: 1rem; align-items: center; gap: 10px; font-size: 0.82rem; font-weight: 600; }
+        .msg-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .msg-box.show { display: flex; }
+
+        /* Back link */
+        .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 1.5rem; font-size: 0.82rem; font-weight: 600; color: #6b7c93; text-decoration: none; transition: color 0.2s; }
+        .back-link:hover { color: #001f3f; }
+
+        /* Mobile */
+        @@media (max-width: 768px) {
+            .login-container { grid-template-columns: 1fr; max-width: 420px; }
+            .left-panel { display: none; }
+            .right-panel { padding: 2.5rem 2rem; }
+            .mobile-logo { display: flex; justify-content: center; margin-bottom: 2rem; }
+            .mobile-logo img { height: 52px; }
+        }
+        @@media (min-width: 769px) {
+            .mobile-logo { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Panel izquierdo -->
+        <div class="left-panel">
+            <div class="content">
+                <img src="/images/Logo-AIFA.png" alt="Logo AIFA" />
+                <h1>Gestión<br/><span>Expediente Aero</span></h1>
+                <p>Impulsando el talento que mueve nuestra terminal. Acceda para validar el progreso de los alumnos y emitir los documentos que avalan su trayectoria profesional.</p>
+            </div>
+            <div class="footer">&copy; <span id="currentYear2"></span> AIFA - Sistema de Control Operativo</div>
+            <i class="bi bi-key-fill deco-icon"></i>
+        </div>
+
+        <!-- Panel derecho -->
+        <div class="right-panel">
+            <div class="mobile-logo">
+                <img src="/images/Logo-AIFA.png" alt="Logo AIFA" />
+            </div>
+
+            <h2>Acceso Estudiante</h2>
+            <p class="subtitle">Ingresa el código que te proporcionó el administrador para registrar tus datos.</p>
+
+            <div class="msg-box" id="msgBox">
+                <i class="bi bi-exclamation-circle" id="msgIcon"></i>
+                <span id="msgText"></span>
+            </div>
+
+            <form id="codigoForm">
+                <div class="form-group">
+                    <label for="codigo">Código de acceso</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="codigo" required placeholder="XXXXXXXX" maxlength="8" autocomplete="off" />
+                        <i class="bi bi-key icon"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-submit">
+                    <span id="btn-text">Ingresar</span>
+                    <i class="bi bi-arrow-right" id="btn-icon"></i>
+                    <div class="spinner" id="btn-spinner"></div>
+                </button>
+            </form>
+
+            <a href="/Auth/Login" class="back-link"><i class="bi bi-arrow-left"></i> Volver al login</a>
+        </div>
+    </div>
+
+    <!-- Modal Fecha Límite -->
+    <div id="modalFechaLimite" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:90%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+            <div style="width:56px;height:56px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;">
+                <i class="bi bi-clock-history" style="font-size:1.5rem;color:#2563eb;"></i>
+            </div>
+            <h3 style="font-size:1.2rem;font-weight:800;color:#0f172a;margin-bottom:0.5rem;">Fecha límite de registro</h3>
+            <p style="color:#64748b;font-size:0.85rem;margin-bottom:1.2rem;">Debes completar tu registro antes de:</p>
+            <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:1rem;margin-bottom:1.5rem;">
+                <span style="font-size:1.1rem;font-weight:700;color:#92400e;" id="dialogFecha"></span>
+            </div>
+            <button onclick="window.location.href='/Auth/RegistroEstudiante';" style="width:100%;padding:14px;background:#001f3f;border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer;">
+                Entendido, continuar <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#currentYear2').text(new Date().getFullYear());
+        });
+
+        $('#codigoForm').submit(function(e) {
+            e.preventDefault();
+            $('#msgBox').removeClass('show');
+            $('#btn-submit').prop('disabled', true);
+            $('#btn-text').text('Verificando...');
+            $('#btn-icon').hide();
+            $('#btn-spinner').show();
+
+            $.ajax({
+                url: '/api/auth/LoginCodigo',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ Codigo: $('#codigo').val() }),
+                success: function(response) {
+                    sessionStorage.setItem('codigo_validado', 'true');
+                    // Mostrar diálogo con fecha límite
+                    var fechaLimite = response.fechaLimite || 'No asignada';
+                    $('#dialogFecha').text(fechaLimite);
+                    $('#modalFechaLimite').css('display','flex').hide().fadeIn(200);
+                },
+                error: function(xhr) {
+                    var msg = 'Código no válido.';
+                    if (xhr.responseJSON && xhr.responseJSON.Message) msg = xhr.responseJSON.Message;
+                    $('#msgText').text(msg);
+                    $('#msgBox').addClass('show');
+                    $('#btn-submit').prop('disabled', false);
+                    $('#btn-text').text('Ingresar');
+                    $('#btn-icon').show();
+                    $('#btn-spinner').hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -44,7 +44,7 @@ public class SubdireccionAifaController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SubdireccionAifa item)
     {
-        if (ModelState.IsValid) { _db.SubdireccionesAifa.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.SubdireccionesAifa.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdDir = new SelectList(await _db.DireccionesAifa.ToListAsync(), "Id", "NombreDir");
         return View(item);
     }
@@ -62,7 +62,7 @@ public class SubdireccionAifaController : Controller
     public async Task<IActionResult> Edit(int id, SubdireccionAifa item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         ViewBag.IdDir = new SelectList(await _db.DireccionesAifa.ToListAsync(), "Id", "NombreDir");
         return View(item);
     }
@@ -79,6 +79,7 @@ public class SubdireccionAifaController : Controller
     {
         var item = await _db.SubdireccionesAifa.FindAsync(id);
         if (item != null) { _db.SubdireccionesAifa.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

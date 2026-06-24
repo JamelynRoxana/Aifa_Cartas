@@ -67,6 +67,75 @@ namespace cartas_aifa.Migrations
                     b.ToTable("Carreras");
                 });
 
+            modelBuilder.Entity("cartas_aifa.Models.CodigoAcceso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asignado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AsignadoA")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaExpiracion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaLimiteRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaUso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Usado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UsadoPor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CodigosAcceso");
+                });
+
+            modelBuilder.Entity("cartas_aifa.Models.ConfiguracionRegistro", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaFin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracionRegistro");
+                });
+
             modelBuilder.Entity("cartas_aifa.Models.ConfiguracionVisual", b =>
                 {
                     b.Property<int>("Id")
@@ -211,23 +280,60 @@ namespace cartas_aifa.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApellidoMaterno")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApellidoPaterno")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Carrera")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("FechaNacimiento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("IdCodigoAcceso")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdDetalleEtapa")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdDireccion")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdF")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdSubdireccion")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdUsuario")
                         .HasColumnType("int");
 
                     b.Property<string>("Matricula")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NombreCompleto")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdCodigoAcceso");
+
+                    b.HasIndex("IdDetalleEtapa");
+
+                    b.HasIndex("IdDireccion");
+
                     b.HasIndex("IdF");
+
+                    b.HasIndex("IdSubdireccion");
+
+                    b.HasIndex("IdUsuario");
 
                     b.ToTable("Estudiantes");
                 });
@@ -577,13 +683,43 @@ namespace cartas_aifa.Migrations
 
             modelBuilder.Entity("cartas_aifa.Models.Estudiante", b =>
                 {
+                    b.HasOne("cartas_aifa.Models.CodigoAcceso", "CodigoAcceso")
+                        .WithMany()
+                        .HasForeignKey("IdCodigoAcceso");
+
+                    b.HasOne("cartas_aifa.Models.DetalleEtapa", "DetalleEtapa")
+                        .WithMany()
+                        .HasForeignKey("IdDetalleEtapa");
+
+                    b.HasOne("cartas_aifa.Models.DireccionAifa", "Direccion")
+                        .WithMany()
+                        .HasForeignKey("IdDireccion");
+
                     b.HasOne("cartas_aifa.Models.Facultad", "Facultad")
                         .WithMany()
                         .HasForeignKey("IdF")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("cartas_aifa.Models.SubdireccionAifa", "Subdireccion")
+                        .WithMany()
+                        .HasForeignKey("IdSubdireccion");
+
+                    b.HasOne("cartas_aifa.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario");
+
+                    b.Navigation("CodigoAcceso");
+
+                    b.Navigation("DetalleEtapa");
+
+                    b.Navigation("Direccion");
+
                     b.Navigation("Facultad");
+
+                    b.Navigation("Subdireccion");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("cartas_aifa.Models.EtapaAifa", b =>

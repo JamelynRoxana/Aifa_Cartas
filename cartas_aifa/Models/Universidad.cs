@@ -9,7 +9,7 @@ public class Universidad
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string NombreU { get; set; } = string.Empty;
 
     public string? DireccionU { get; set; }

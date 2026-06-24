@@ -1,0 +1,382 @@
+@model IEnumerable<CodigoAcceso>
+@{
+    ViewData["Title"] = "Códigos de Acceso";
+}
+
+<div class="max-w-5xl mx-auto">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <h2 class="text-2xl font-bold text-gray-900">
+            <i class="bi bi-key mr-2"></i>Códigos de Acceso
+        </h2>
+        <form asp-action="Generar" method="post" class="flex items-end gap-3">
+            @Html.AntiForgeryToken()
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1"data-i18n="codigos_cantidad">Cantidad</label>
+                <input type="number" name="cantidad" value="1" min="1" max="50" class="w-20 px-3 py-2 border border-gray-200 rounded-xl text-sm text-center focus:border-blue-500 outline-none" />
+            </div>
+            <button type="submit" class="bg-[#001f3f] text-white px-5 py-2 rounded-xl font-bold hover:bg-[#001530] transition-colors shadow-sm text-sm">
+                <i class="bi bi-plus-circle mr-1"></i> Generar
+            </button>
+        </form>
+    </div>
+
+    <!-- Filtros en tiempo real -->
+    <div class="flex gap-3 items-center flex-wrap mb-6">
+        <div class="flex-1 min-w-[200px]">
+            <input type="text" id="filtro-buscar" placeholder="Buscar por código, nombre, fecha..."
+                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-sm" />
+        </div>
+        <select id="filtro-estado" class="px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm">
+            <option value="">Todos</option>
+            <option value="Disponible">Disponible</option>
+            <option value="Usado">Usado</option>
+            <option value="Expirado">Expirado</option>
+        </select>
+        <select id="filtro-asignado" class="px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm">
+            <option value="">Asignación: Todos</option>
+            <option value="si">Asignado</option>
+            <option value="no">No asignado</option>
+        </select>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm overflow-visible">
+        <table class="w-full text-left">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-3 py-3 font-bold text-gray-900">ID</th>
+                    <th class="px-6 py-3 font-bold text-gray-900">Código</th>
+                    <th class="px-4 py-3 font-bold text-gray-900">Estado</th>
+                    <th class="px-4 py-3 font-bold text-gray-900">Usado por</th>
+                    <th class="px-4 py-3 font-bold text-gray-900">Fecha de uso</th>
+                    <th class="px-4 py-3 font-bold text-gray-900">Creado</th>
+                    <th class="px-4 py-3 font-bold text-gray-900">Asignado a</th>
+                    <th class="px-4 py-3 font-bold text-gray-900 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-codigos" class="divide-y divide-gray-200">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        var expirado = item.FechaExpiracion.HasValue && DateTime.UtcNow > item.FechaExpiracion;
+                        var estado = item.Usado ? "Usado" : (expirado ? "Expirado" : "Disponible");
+                        var badgeClass = item.Usado ? "bg-gray-200 text-gray-600" : (expirado ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700");
+
+                        <tr class="hover:bg-gray-50 fila-codigo" data-estado="@estado" data-asignado="@(item.Asignado ? "si" : "no")" data-id="@item.Id">
+                            <td class="px-3 py-4 text-gray-500 text-sm font-mono">@item.Id</td>
+                            <td class="px-6 py-4">
+                                <code class="text-lg font-bold tracking-widest text-blue-700 bg-blue-50 px-3 py-1 rounded-lg">@item.Codigo</code>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-block px-3 py-1 text-xs font-bold rounded-full @badgeClass">@estado</span>
+                            </td>
+                            <td class="px-4 py-4 text-gray-700 text-sm font-medium">@(item.UsadoPor ?? "-")</td>
+                            <td class="px-4 py-4 text-gray-600 text-sm">@(item.FechaUso?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                            <td class="px-4 py-4 text-gray-600 text-sm">@item.FechaCreacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="check-asignado w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer"
+                                           data-id="@item.Id" @(item.Asignado ? "checked" : "") />
+                                    <span class="text-xs text-gray-500">@(item.Asignado ? "Asignado" : "")</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="text-red-500 hover:text-red-700 font-semibold text-sm">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="fila-vacia">
+                        <td colspan="8" class="text-center py-12 text-gray-500">
+                            <i class="bi bi-key text-4xl block mb-3"></i>
+                            No hay códigos generados.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-gray-400 text-xs mt-4 text-center" id="total-label">Total: @Model?.Count() códigos</p>
+
+    <!-- Paginación -->
+    <div id="paginacion" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
+        <button id="btn-primera" onclick="irPagina(1)" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;" title="Primera">
+            <i class="bi bi-chevron-double-left"></i>
+        </button>
+        <button id="btn-anterior" onclick="paginaAnterior()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.8rem;">
+            <i class="bi bi-chevron-left"></i> Anterior
+        </button>
+        <span id="pag-info" style="font-size:0.8rem;color:#64748b;font-weight:600;padding:0 8px;">Página 1 de 1</span>
+        <button id="btn-siguiente" onclick="paginaSiguiente()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.8rem;">
+            Siguiente <i class="bi bi-chevron-right"></i>
+        </button>
+        <button id="btn-ultima" onclick="irUltima()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;" title="Última">
+            <i class="bi bi-chevron-double-right"></i>
+        </button>
+    </div>
+
+    <!-- Botones de exportación -->
+    <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);padding:16px;margin-top:16px;">
+        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+            <button onclick="imprimirCuadricula()" style="background:#1e293b;color:#fff;padding:10px 20px;border-radius:12px;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                <i class="bi bi-grid-3x3"></i> Imprimir Cuadrícula
+            </button>
+            <button onclick="imprimirListado()" style="background:#4f46e5;color:#fff;padding:10px 20px;border-radius:12px;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                <i class="bi bi-list-ul"></i> Imprimir Listado
+            </button>
+            <button onclick="exportarExcel()" style="background:#16a34a;color:#fff;padding:10px 20px;border-radius:12px;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Exportar Excel
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var buscarInput = document.getElementById('filtro-buscar');
+    var selectEstado = document.getElementById('filtro-estado');
+    var selectAsignado = document.getElementById('filtro-asignado');
+
+    var porPagina = 20;
+    var paginaActual = 1;
+    var filasVisibles = [];
+
+    function filtrar() {
+        var texto = buscarInput.value.toLowerCase();
+        var estado = selectEstado.value;
+        var asignado = selectAsignado.value;
+        var filas = document.querySelectorAll('.fila-codigo');
+        filasVisibles = [];
+
+        filas.forEach(function(fila) {
+            var contenido = fila.textContent.toLowerCase();
+            var estadoFila = fila.getAttribute('data-estado');
+            var asignadoFila = fila.getAttribute('data-asignado');
+            var coincideTexto = !texto || contenido.indexOf(texto) !== -1;
+            var coincideEstado = !estado || estadoFila === estado;
+            var coincideAsignado = !asignado || asignadoFila === asignado;
+
+            if (coincideTexto && coincideEstado && coincideAsignado) {
+                filasVisibles.push(fila);
+            } else {
+                fila.style.display = 'none';
+            }
+        });
+
+        paginaActual = 1;
+        aplicarPaginacion();
+    }
+
+    function aplicarPaginacion() {
+        var total = filasVisibles.length;
+        var totalPaginas = Math.max(1, Math.ceil(total / porPagina));
+        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+        var inicio = (paginaActual - 1) * porPagina;
+        var fin = inicio + porPagina;
+
+        filasVisibles.forEach(function(fila, i) {
+            fila.style.display = (i >= inicio && i < fin) ? '' : 'none';
+        });
+
+        document.getElementById('total-label').textContent = 'Mostrando ' + Math.min(fin, total) + ' de ' + total + ' códigos';
+        document.getElementById('pag-info').textContent = 'Página ' + paginaActual + ' de ' + totalPaginas;
+
+        document.getElementById('btn-anterior').disabled = (paginaActual <= 1);
+        document.getElementById('btn-primera').disabled = (paginaActual <= 1);
+        document.getElementById('btn-siguiente').disabled = (paginaActual >= totalPaginas);
+        document.getElementById('btn-ultima').disabled = (paginaActual >= totalPaginas);
+
+        // Estilo visual disabled
+        var btns = [document.getElementById('btn-anterior'), document.getElementById('btn-primera'),
+                    document.getElementById('btn-siguiente'), document.getElementById('btn-ultima')];
+        btns.forEach(function(b) {
+            b.style.opacity = b.disabled ? '0.4' : '1';
+            b.style.cursor = b.disabled ? 'not-allowed' : 'pointer';
+        });
+    }
+
+    function paginaAnterior() { if (paginaActual > 1) { paginaActual--; aplicarPaginacion(); } }
+    function paginaSiguiente() {
+        var totalPaginas = Math.ceil(filasVisibles.length / porPagina);
+        if (paginaActual < totalPaginas) { paginaActual++; aplicarPaginacion(); }
+    }
+    function irPagina(n) { paginaActual = n; aplicarPaginacion(); }
+    function irUltima() { paginaActual = Math.ceil(filasVisibles.length / porPagina); aplicarPaginacion(); }
+
+    buscarInput.addEventListener('input', filtrar);
+    selectEstado.addEventListener('change', filtrar);
+    selectAsignado.addEventListener('change', filtrar);
+
+    // Inicializar paginación al cargar
+    (function() {
+        var filas = document.querySelectorAll('.fila-codigo');
+        filasVisibles = Array.prototype.slice.call(filas);
+        aplicarPaginacion();
+    })();
+
+    // Check de asignación
+    document.querySelectorAll('.check-asignado').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var id = this.getAttribute('data-id');
+            var fila = this.closest('tr');
+            var label = this.parentElement.querySelector('span');
+            fetch('/CodigoAcceso/ToggleAsignado?id=' + id, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    label.textContent = data.asignado ? 'Asignado' : '';
+                    fila.setAttribute('data-asignado', data.asignado ? 'si' : 'no');
+                    filtrar();
+                });
+        });
+    });
+
+    // Obtener texto del filtro activo
+    function getDescripcionFiltro() {
+        var estado = selectEstado.value;
+        var asignado = selectAsignado.value;
+        var partes = [];
+        if (estado) partes.push(estado);
+        if (asignado === 'si') partes.push('Asignados');
+        else if (asignado === 'no') partes.push('No asignados');
+        return partes.length > 0 ? ' (' + partes.join(', ') + ')' : ' (Todos)';
+    }
+
+    // Obtener TODOS los códigos filtrados (no solo los de la página actual) para exportación
+    function getCodigosVisibles() {
+        var codigos = [];
+        filasVisibles.forEach(function(f) {
+            var cells = f.querySelectorAll('td');
+            var checkAsignado = f.querySelector('.check-asignado');
+            var asignadoLabel = checkAsignado ? checkAsignado.parentElement.querySelector('span').textContent.trim() : '';
+            codigos.push({
+                id: f.getAttribute('data-id'),
+                codigo: cells[1].textContent.trim(),
+                estado: cells[2].textContent.trim(),
+                usadoPor: cells[3].textContent.trim(),
+                fechaUso: cells[4].textContent.trim(),
+                creado: cells[5].textContent.trim(),
+                asignado: checkAsignado ? checkAsignado.checked : false,
+                asignadoA: asignadoLabel || '-'
+            });
+        });
+        return codigos;
+    }
+
+    // Imprimir en cuadrícula para recortar y repartir
+    function imprimirCuadricula() {
+        var codigos = getCodigosVisibles();
+        if (codigos.length === 0) { alert('No hay códigos para imprimir con los filtros actuales.'); return; }
+        var filtroTexto = getDescripcionFiltro();
+        var html = '<html><head><title>Códigos AIFA</title><style>';
+        html += '*{margin:0;padding:0;box-sizing:border-box;}';
+        html += 'body{font-family:Inter,Arial,sans-serif;padding:15px;}';
+        html += 'h2{text-align:center;margin-bottom:4px;font-size:1.1rem;color:#001f3f;}';
+        html += '.subtitulo{text-align:center;font-size:0.75rem;color:#64748b;margin-bottom:14px;}';
+        html += '.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}';
+        html += '.card{border:1px dashed #94a3b8;padding:18px 10px;text-align:center;page-break-inside:avoid;position:relative;}';
+        html += '.card .id-badge{position:absolute;top:4px;right:6px;font-size:0.55rem;color:#94a3b8;font-weight:600;}';
+        html += '.card code{font-size:1.5rem;font-weight:900;letter-spacing:5px;color:#1e293b;display:block;margin:6px 0;}';
+        html += '.card .label{font-size:0.6rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;}';
+        html += '.card .estado{font-size:0.65rem;font-weight:600;margin-top:4px;padding:2px 8px;border-radius:8px;display:inline-block;}';
+        html += '.card .estado.disponible{background:#dcfce7;color:#166534;}';
+        html += '.card .estado.usado{background:#f3f4f6;color:#4b5563;}';
+        html += '.card .estado.expirado{background:#fef2f2;color:#b91c1c;}';
+        html += '.card .asignado-badge{font-size:0.6rem;color:#3b82f6;margin-top:3px;}';
+        html += '.total{text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;}';
+        html += '@@media print{body{padding:8px;} .no-print{display:none !important;}}';
+        html += '</style></head><body>';
+        html += '<h2>✂️ Códigos de Acceso - AIFA</h2>';
+        html += '<p class="subtitulo">Recortar por las líneas punteadas' + filtroTexto + ' — Total: ' + codigos.length + '</p>';
+        html += '<div class="grid">';
+        codigos.forEach(function(c) {
+            var estadoClass = c.estado.toLowerCase();
+            html += '<div class="card">';
+            html += '<div class="id-badge">#' + c.id + '</div>';
+            html += '<div class="label">Código de Acceso</div>';
+            html += '<code>' + c.codigo + '</code>';
+            html += '<div class="estado ' + estadoClass + '">' + c.estado + '</div>';
+            if (c.asignado) html += '<div class="asignado-badge">✓ Asignado</div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        html += '<p class="total">Generado: ' + new Date().toLocaleString() + '</p>';
+        html += '</body></html>';
+        var win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        win.setTimeout(function() { win.print(); }, 400);
+    }
+
+    // Exportar a Excel (CSV) como listado completo
+    function exportarExcel() {
+        var codigos = getCodigosVisibles();
+        if (codigos.length === 0) { alert('No hay códigos para exportar con los filtros actuales.'); return; }
+        var csv = 'ID,Código,Estado,Asignado,Usado por,Fecha de uso,Creado\n';
+        codigos.forEach(function(c) {
+            csv += '"' + c.id + '","' + c.codigo + '","' + c.estado + '","' + (c.asignado ? 'Sí' : 'No') + '","' + c.usadoPor + '","' + c.fechaUso + '","' + c.creado + '"\n';
+        });
+        var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'codigos_acceso_' + new Date().toISOString().slice(0,10) + '.csv';
+        link.click();
+    }
+
+    // Imprimir listado tipo Excel (tabla formal)
+    function imprimirListado() {
+        var codigos = getCodigosVisibles();
+        if (codigos.length === 0) { alert('No hay códigos para imprimir con los filtros actuales.'); return; }
+        var filtroTexto = getDescripcionFiltro();
+        var html = '<html><head><title>Listado Códigos AIFA</title><style>';
+        html += '*{margin:0;padding:0;box-sizing:border-box;}';
+        html += 'body{font-family:Inter,Arial,sans-serif;padding:20px;font-size:12px;}';
+        html += 'h2{text-align:center;margin-bottom:4px;font-size:1rem;color:#001f3f;}';
+        html += '.subtitulo{text-align:center;font-size:0.75rem;color:#64748b;margin-bottom:12px;}';
+        html += 'table{width:100%;border-collapse:collapse;margin-top:8px;}';
+        html += 'th{background:#1e293b;color:#fff;padding:8px 10px;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;}';
+        html += 'td{padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:0.8rem;}';
+        html += 'tr:nth-child(even){background:#f8fafc;}';
+        html += 'tr:hover{background:#eff6ff;}';
+        html += '.badge{padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;}';
+        html += '.badge-disponible{background:#dcfce7;color:#166534;}';
+        html += '.badge-usado{background:#f3f4f6;color:#4b5563;}';
+        html += '.badge-expirado{background:#fef2f2;color:#b91c1c;}';
+        html += '.footer{text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:12px;}';
+        html += '@@media print{body{padding:10px;}}';
+        html += '</style></head><body>';
+        html += '<h2>Listado de Códigos de Acceso - AIFA</h2>';
+        html += '<p class="subtitulo">' + filtroTexto + ' — Total: ' + codigos.length + ' códigos</p>';
+        html += '<table><thead><tr>';
+        html += '<th>ID</th><th>Código</th><th>Estado</th><th>Asignado</th><th>Usado por</th><th>Fecha de uso</th><th>Creado</th>';
+        html += '</tr></thead><tbody>';
+        codigos.forEach(function(c, i) {
+            var estadoClass = c.estado.toLowerCase();
+            html += '<tr>';
+            html += '<td>' + c.id + '</td>';
+            html += '<td><strong style="letter-spacing:2px;">' + c.codigo + '</strong></td>';
+            html += '<td><span class="badge badge-' + estadoClass + '">' + c.estado + '</span></td>';
+            html += '<td>' + (c.asignado ? '✓ Sí' : 'No') + '</td>';
+            html += '<td>' + c.usadoPor + '</td>';
+            html += '<td>' + c.fechaUso + '</td>';
+            html += '<td>' + c.creado + '</td>';
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        html += '<p class="footer">Generado: ' + new Date().toLocaleString() + '</p>';
+        html += '</body></html>';
+        var win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        win.setTimeout(function() { win.print(); }, 400);
+    }
+</script>
+}

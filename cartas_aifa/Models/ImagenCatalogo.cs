@@ -9,7 +9,7 @@ public class ImagenCatalogo
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     [Display(Name = "Nombre del Logo")]
     public string NombreArchivo { get; set; } = string.Empty;
 

@@ -75,7 +75,7 @@ public class AuthApiController : ControllerBase
 
                     // Devolver flag para redirigir a cambio de contraseña
                     var tempToken = CrearToken(usuario);
-                    return Ok(new { token = tempToken, nombre = usuario.Nombre, requiereCambio = true });
+                    return Ok(new { token = tempToken, nombre = usuario.Nombre, rol = usuario.Rol, requiereCambio = true });
                 }
             }
             catch { /* Si falla BCrypt en la temporal, ignorar */ }
@@ -85,7 +85,7 @@ public class AuthApiController : ControllerBase
             return Unauthorized(new { Message = "Correo o contraseña incorrectos." });
 
         var token = CrearToken(usuario);
-        return Ok(new { token, nombre = usuario.Nombre });
+        return Ok(new { token, nombre = usuario.Nombre, rol = usuario.Rol });
     }
 
     [HttpPost("Registrar")]
@@ -109,6 +109,82 @@ public class AuthApiController : ControllerBase
     public IActionResult Logout()
     {
         return Ok(new { message = "Logout successful. Por favor elimine el token en el cliente." });
+    }
+
+    [HttpPost("LoginCodigo")]
+    public async Task<IActionResult> LoginCodigo([FromBody] LoginCodigoDto data)
+    {
+        if (data == null || string.IsNullOrEmpty(data.Codigo))
+            return BadRequest(new { Message = "Debe ingresar un código." });
+
+        var codigo = await _db.CodigosAcceso.FirstOrDefaultAsync(c => c.Codigo == data.Codigo.ToUpper().Trim());
+
+        if (codigo == null)
+            return Unauthorized(new { Message = "Código no válido." });
+
+        if (codigo.Usado)
+            return Unauthorized(new { Message = "Este código ya fue utilizado." });
+
+        if (codigo.FechaExpiracion.HasValue && DateTime.UtcNow > codigo.FechaExpiracion)
+            return Unauthorized(new { Message = "Este código ha expirado. Solicita uno nuevo al administrador." });
+
+        // Asignar fecha límite desde la configuración de registro activa
+        if (codigo.FechaLimiteRegistro == null)
+        {
+            var configRegistro = await _db.ConfiguracionesRegistro
+                .Where(c => c.Activo)
+                .OrderByDescending(c => c.Id)
+                .FirstOrDefaultAsync();
+            if (configRegistro != null)
+            {
+                codigo.FechaLimiteRegistro = configRegistro.FechaFin;
+            }
+        }
+
+        // Marcar como usado
+        codigo.Usado = true;
+        codigo.FechaUso = DateTime.UtcNow;
+        codigo.UsadoPor = data.Codigo?.ToUpper().Trim(); // Se actualizará con el nombre al registrarse
+        await _db.SaveChangesAsync();
+
+        return Ok(new {
+            message = "Código válido.",
+            redirigir = "/Auth/RegistroEstudiante",
+            fechaLimite = codigo.FechaLimiteRegistro?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+        });
+    }
+
+    [HttpPost("RegistrarEstudiante")]
+    public async Task<IActionResult> RegistrarEstudiante([FromBody] Usuario usuario)
+    {
+        if (usuario == null || string.IsNullOrEmpty(usuario.Nombre) || string.IsNullOrEmpty(usuario.Correo) || string.IsNullOrEmpty(usuario.Contrasena))
+            return BadRequest(new { Message = "Todos los campos son requeridos." });
+
+        if (usuario.Contrasena.Length < 6)
+            return BadRequest(new { Message = "La contraseña debe tener al menos 6 caracteres." });
+
+        var existe = await _db.Usuarios.AnyAsync(u => u.Correo == usuario.Correo);
+        if (existe)
+            return BadRequest(new { Message = "El correo ya está registrado." });
+
+        usuario.Rol = "Estudiante";
+        usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
+        _db.Usuarios.Add(usuario);
+        await _db.SaveChangesAsync();
+
+        // Actualizar el último código usado con el nombre del estudiante
+        var ultimoCodigo = await _db.CodigosAcceso
+            .Where(c => c.Usado && c.UsadoPor != null)
+            .OrderByDescending(c => c.FechaUso)
+            .FirstOrDefaultAsync();
+        if (ultimoCodigo != null)
+        {
+            ultimoCodigo.UsadoPor = $"{usuario.Nombre} ({usuario.Correo})";
+            await _db.SaveChangesAsync();
+        }
+
+        var token = CrearToken(usuario);
+        return Ok(new { token, nombre = usuario.Nombre, rol = "Estudiante" });
     }
 
     [HttpPost("CambiarContrasena")]
@@ -136,6 +212,85 @@ public class AuthApiController : ControllerBase
         return Ok(new { message = "Contraseña actualizada exitosamente." });
     }
 
+    [HttpPost("CambiarCorreo")]
+    public async Task<IActionResult> CambiarCorreo([FromBody] CambiarCorreoDto data)
+    {
+        if (data == null || string.IsNullOrEmpty(data.NuevoCorreo))
+            return BadRequest(new { message = "Debe ingresar un correo." });
+
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            return Unauthorized(new { message = "Sesión no válida." });
+
+        var userId = int.Parse(userIdClaim.Value);
+        var usuario = await _db.Usuarios.FindAsync(userId);
+        if (usuario == null)
+            return NotFound(new { message = "Usuario no encontrado." });
+
+        var existe = await _db.Usuarios.AnyAsync(u => u.Correo == data.NuevoCorreo && u.Id != userId);
+        if (existe)
+            return BadRequest(new { message = "Ya existe otro usuario con ese correo." });
+
+        usuario.Correo = data.NuevoCorreo;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Correo actualizado exitosamente." });
+    }
+
+    [HttpPost("SubirAvatar")]
+    public async Task<IActionResult> SubirAvatar(IFormFile archivo)
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            return Unauthorized(new { message = "Sesión no válida." });
+
+        if (archivo == null || archivo.Length == 0)
+            return BadRequest(new { message = "Selecciona una imagen." });
+
+        var userId = int.Parse(userIdClaim.Value);
+        var usuario = await _db.Usuarios.FindAsync(userId);
+        if (usuario == null)
+            return NotFound(new { message = "Usuario no encontrado." });
+
+        // Guardar archivo
+        var ext = Path.GetExtension(archivo.FileName).ToLower();
+        if (ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp")
+            return BadRequest(new { message = "Solo se permiten imágenes JPG, PNG o WebP." });
+
+        var fileName = $"avatar_{userId}{ext}";
+        var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "avatars");
+        if (!Directory.Exists(uploadsDir)) Directory.CreateDirectory(uploadsDir);
+
+        var filePath = Path.Combine(uploadsDir, fileName);
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await archivo.CopyToAsync(stream);
+        }
+
+        usuario.AvatarUrl = $"/avatars/{fileName}?v={DateTime.Now.Ticks}";
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Avatar actualizado.", avatarUrl = usuario.AvatarUrl });
+    }
+
+    [HttpPost("CambiarAvatar")]
+    public async Task<IActionResult> CambiarAvatar([FromBody] CambiarAvatarDto data)
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            return Unauthorized(new { message = "Sesión no válida." });
+
+        var userId = int.Parse(userIdClaim.Value);
+        var usuario = await _db.Usuarios.FindAsync(userId);
+        if (usuario == null)
+            return NotFound(new { message = "Usuario no encontrado." });
+
+        usuario.AvatarUrl = data.AvatarUrl;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Avatar actualizado.", avatarUrl = usuario.AvatarUrl });
+    }
+
     // Endpoint temporal para resetear contraseñas corruptas - ELIMINAR después de usar
     [HttpPost("FixPassword")]
     public async Task<IActionResult> FixPassword([FromBody] LoginDto data)
@@ -147,6 +302,19 @@ public class AuthApiController : ControllerBase
         usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(data.Contrasena);
         await _db.SaveChangesAsync();
         return Ok(new { message = "Contraseña restablecida." });
+    }
+
+    [HttpPost("FixRoles")]
+    public async Task<IActionResult> FixRoles()
+    {
+        var usuarios = await _db.Usuarios.Where(u => u.Id != 1).ToListAsync();
+        foreach (var u in usuarios)
+        {
+            if (u.Rol == "Administrativo" || string.IsNullOrEmpty(u.Rol))
+                u.Rol = "Estudiante";
+        }
+        await _db.SaveChangesAsync();
+        return Ok(new { message = $"Se actualizaron {usuarios.Count} usuarios a Estudiante." });
     }
 
     [HttpPost("ForgotPassword")]

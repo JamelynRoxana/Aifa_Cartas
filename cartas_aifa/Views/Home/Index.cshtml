@@ -3,96 +3,204 @@
     ViewData["Title"] = "Panel de Control de Cartas";
 }
 
+<script>
+    if (localStorage.getItem('user_rol') === 'Estudiante') {
+        window.location.replace('/Home/Estudiante');
+    }
+</script>
+
 @section Hero {
     <div class="relative w-full h-[450px] bg-cover bg-right md:bg-center bg-scroll md:bg-fixed flex flex-col z-0 rounded-b-xl shadow-lg" style="background-image: linear-gradient(to bottom, rgba(12,40,67,0.7) 0%, rgba(12,40,67,0) 30%, rgba(244,247,249,0) 75%, rgba(244,247,249,1) 100%), url('https://www.gob.mx/cms/uploads/image/file/731485/WhatsApp_Image_2022-06-30_at_1.16.11_PM__2_.jpeg');"></div>
 }
 
-<div class="flex flex-wrap mb-6">
-    <div class="w-full text-center xl:text-left">
-        <h2 class="font-bold text-blue-600 text-3xl mb-2"><i class="bi bi-file-earmark-pdf-fill mr-2"></i>Emisión de Cartas Académicas</h2>
-        <p class="text-purple-500">Gestión de folios, alumnos y validación de firmas para el AIFA.</p>
+<!-- Header del dashboard -->
+<div style="margin-bottom:2rem;">
+    <h2 style="font-size:1.8rem;font-weight:800;color:#001f3f;margin-bottom:0.3rem;">
+        <i class="bi bi-file-earmark-pdf-fill mr-2"></i>Emisión de Cartas Académicas
+    </h2>
+    <p style="color:#64748b;font-size:0.9rem;">Gestión de folios, alumnos y validación de firmas para el AIFA.</p>
+</div>
+
+<!-- Cards resumen -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.25rem;margin-bottom:2.5rem;">
+    <!-- Card: Nuevo Trámite -->
+    <div style="background:linear-gradient(135deg, #001f3f 0%, #0c3d6e 100%);border-radius:20px;padding:2rem;color:#fff;position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 30px rgba(0,31,63,0.2);">
+        <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,0.03);border-radius:50%;"></div>
+        <div style="position:absolute;bottom:-30px;right:30px;width:80px;height:80px;background:rgba(162,227,196,0.06);border-radius:50%;"></div>
+        <div>
+            <div style="width:42px;height:42px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                <i class="bi bi-plus-lg" style="font-size:1.2rem;"></i>
+            </div>
+            <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:0.4rem;">Nuevo Trámite</h3>
+            <p style="font-size:0.8rem;opacity:0.6;line-height:1.5;">Registre un folio para generar una carta de aceptación o término.</p>
+        </div>
+        <a asp-controller="TramiteAcademico" asp-action="Create" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#001f3f;padding:10px 20px;border-radius:10px;font-size:0.8rem;font-weight:700;text-decoration:none;margin-top:1rem;width:fit-content;transition:all 0.2s;">
+            Comenzar Registro <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Card: Estadísticas -->
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:2rem;display:flex;flex-direction:column;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;">
+            <div style="width:42px;height:42px;background:#f0fdf4;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-bar-chart-fill" style="color:#16a34a;font-size:1.1rem;"></i>
+            </div>
+            <div>
+                <p style="font-size:0.7rem;color:#64748b;text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">Trámites registrados</p>
+                <p style="font-size:1.8rem;font-weight:800;color:#001f3f;line-height:1;">@(Model?.Count() ?? 0)</p>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div style="background:#f8fafc;border-radius:12px;padding:0.8rem 1rem;text-align:center;">
+                <p style="font-size:1.1rem;font-weight:700;color:#001f3f;">@DateTime.Now.ToString("dd/MM/yyyy")</p>
+                <p style="font-size:0.65rem;color:#94a3b8;text-transform:uppercase;font-weight:600;">Fecha</p>
+            </div>
+            <div style="background:#f0fdf4;border-radius:12px;padding:0.8rem 1rem;text-align:center;">
+                <p style="font-size:1.1rem;font-weight:700;color:#16a34a;">● Activo</p>
+                <p style="font-size:0.65rem;color:#94a3b8;text-transform:uppercase;font-weight:600;">Servidor PDF</p>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-    <div class="xl:col-span-1 md:col-span-1">
-        <div class="bg-blue-600 text-white shadow-sm rounded-2xl p-4 h-full flex flex-col">
-            <div class="flex-1 p-2">
-                <h5 class="font-bold text-xl mb-2"><i class="bi bi-plus-circle-fill mr-2"></i>Nuevo Trámite</h5>
-                <p class="text-sm opacity-75 mb-4">Registre un nuevo folio para generar una carta de aceptación o término.</p>
-                <a asp-controller="TramiteAcademico" asp-action="Create" class="inline-block bg-white text-blue-600 hover:bg-gray-100 text-sm font-bold rounded-full px-6 py-2 transition-colors">
-                    Comenzar Registro
+<!-- Tabla de trámites -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;overflow:visible;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+    <!-- Header de tabla -->
+    <div style="padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:#f8fafc;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-list-task" style="color:#001f3f;font-size:1rem;"></i>
+            </div>
+            <h5 style="font-weight:700;color:#0f172a;font-size:1.1rem;margin:0;">Trámites Listos para PDF</h5>
+        </div>
+        @if (Model != null && Model.Any())
+        {
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="imprimirSeleccionados()" id="btnImprimirSel" style="background:#001f3f;color:#fff;padding:8px 16px;border-radius:10px;font-weight:600;font-size:0.78rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;opacity:0.4;pointer-events:none;transition:all 0.2s;">
+                    <i class="bi bi-printer"></i> Imprimir Seleccionados
+                </button>
+                <a href="/TramiteAcademico/ImprimirTodos" target="_blank" style="background:#001f3f;color:#fff;padding:8px 16px;border-radius:10px;font-weight:600;font-size:0.78rem;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;">
+                    <i class="bi bi-file-pdf-fill"></i> Imprimir Todos
                 </a>
             </div>
-        </div>
+        }
     </div>
 
-    <div class="xl:col-span-2 md:col-span-1">
-        <div class="bg-white shadow-sm rounded-2xl p-4 h-full flex flex-col">
-            <div class="flex-1 flex items-center justify-around text-center p-2">
-                <div>
-                    <h4 class="font-bold text-blue-600 text-2xl mb-1">@DateTime.Now.ToString("dd/MM/yyyy")</h4>
-                    <span class="text-gray-500 text-sm">Fecha de Impresión</span>
-                </div>
-                <div class="w-px bg-gray-300 mx-4 self-stretch"></div>
-                <div>
-                    <h4 class="font-bold text-green-600 text-2xl mb-1">Activo</h4>
-                    <span class="text-gray-500 text-sm">Servidor de PDF</span>
-                </div>
-            </div>
-        </div>
+    <!-- Búsqueda -->
+    <div style="padding:1rem 1.5rem 0.75rem;display:flex;gap:10px;flex-wrap:wrap;">
+        <select id="filtroUniversidad" style="padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;min-width:200px;">
+            <option value="">Todas las universidades</option>
+            @if (ViewBag.Universidades != null)
+            {
+                foreach (var uni in (IEnumerable<Universidad>)ViewBag.Universidades)
+                {
+                    <option value="@uni.NombreU">@uni.NombreU</option>
+                }
+            }
+        </select>
+        <input type="text" id="buscarHome" placeholder="Buscar por folio, estudiante, etapa, tipo de carta..."
+               style="flex:1;min-width:200px;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;" />
     </div>
-</div>
 
-<div class="flex flex-wrap mt-12">
-    <div class="w-full">
-        <div class="bg-white shadow-sm rounded-2xl overflow-hidden">
-            <div class="bg-white py-4 px-5">
-                <h5 class="mb-0 font-bold text-gray-900 text-xl"><i class="bi bi-list-task mr-2"></i>Trámites Listos para PDF</h5>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left align-middle border-collapse">
-                    <thead class="bg-gray-100 text-gray-900">
-                        <tr>
-                            <th class="px-6 py-3 font-bold">Folio</th>
-                            <th class="px-4 py-3 font-bold">Estudiante</th>
-                            <th class="px-4 py-3 font-bold">Etapa</th>
-                            <th class="px-4 py-3 font-bold">Tipo de Carta</th>
-                            <th class="px-4 py-3 font-bold text-center">Acción de PDF</th>
+    <!-- Tabla -->
+    <div style="overflow-x:auto;">
+        <table style="width:100%;text-align:left;border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f8fafc;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;">
+                    <th style="padding:12px 16px;width:40px;">
+                        <input type="checkbox" id="checkTodosTramites" style="width:16px;height:16px;cursor:pointer;accent-color:#001f3f;" />
+                    </th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Folio</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Estudiante</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Etapa</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Tipo de Carta</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr class="fila-tramite" data-universidad="@(item.Estudiante?.Facultad?.Universidad?.NombreU ?? "")" style="border-bottom:1px solid #f8fafc;transition:background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:14px 16px;">
+                                <input type="checkbox" class="check-tramite" value="@item.Id" style="width:16px;height:16px;cursor:pointer;accent-color:#001f3f;" />
+                            </td>
+                            <td style="padding:14px 16px;font-weight:700;color:#0f172a;font-size:0.9rem;">@item.Folio</td>
+                            <td style="padding:14px 16px;color:#334155;font-size:0.88rem;">@item.Estudiante?.NombreCompleto</td>
+                            <td style="padding:14px 16px;color:#64748b;font-size:0.85rem;">@item.DetalleEtapa?.TipoEtapa</td>
+                            <td style="padding:14px 16px;color:#64748b;font-size:0.85rem;">@item.TipoCarta?.NombreCarta</td>
+                            <td style="padding:14px 16px;text-align:center;">
+                                <a asp-controller="TramiteAcademico" asp-action="ImprimirCarta" asp-route-id="@item.Id"
+                                   style="display:inline-flex;align-items:center;gap:5px;background:#001f3f;color:#fff;padding:7px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,31,63,0.15);"
+                                   target="_blank">
+                                    <i class="bi bi-file-pdf-fill"></i> Generar PDF
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-blue-600">@item.Folio</td>
-                                    <td class="px-4 py-4 text-gray-900">@item.Estudiante?.NombreCompleto</td>
-                                    <td class="px-4 py-4"><span class="inline-block px-2 py-1 text-xs font-bold rounded bg-cyan-400 text-gray-900">@item.DetalleEtapa?.TipoEtapa</span></td>
-                                    <td class="px-4 py-4 text-gray-900">@item.TipoCarta?.NombreCarta</td>
-                                    <td class="px-4 py-4 text-center">
-                                        <a asp-controller="TramiteAcademico" asp-action="ImprimirCarta" asp-route-id="@item.Id"
-                                           class="inline-block bg-red-600 text-white hover:bg-red-700 text-sm rounded-full px-5 py-2 shadow-sm transition-colors"
-                                           target="_blank">
-                                            <i class="bi bi-file-pdf-fill mr-1"></i> Generar PDF
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center py-12 text-gray-500">
-                                    <i class="bi bi-search text-5xl block mb-4"></i>
-                                    No hay trámites registrados para mostrar.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:4rem 2rem;color:#94a3b8;">
+                            <div style="width:56px;height:56px;background:#f8fafc;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                                <i class="bi bi-inbox" style="font-size:1.5rem;color:#cbd5e1;"></i>
+                            </div>
+                            <p style="font-weight:600;color:#64748b;margin-bottom:0.3rem;">No hay trámites registrados</p>
+                            <p style="font-size:0.8rem;">Crea un nuevo trámite para comenzar a generar cartas.</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    var checkTodos = document.getElementById('checkTodosTramites');
+    var btnSel = document.getElementById('btnImprimirSel');
+
+    if (checkTodos) {
+        checkTodos.addEventListener('change', function() {
+            document.querySelectorAll('.check-tramite').forEach(function(cb) { cb.checked = checkTodos.checked; });
+            actualizarBtnSel();
+        });
+
+        document.querySelectorAll('.check-tramite').forEach(function(cb) {
+            cb.addEventListener('change', actualizarBtnSel);
+        });
+    }
+
+    function actualizarBtnSel() {
+        var sel = document.querySelectorAll('.check-tramite:checked').length;
+        if (btnSel) {
+            btnSel.style.opacity = sel > 0 ? '1' : '0.5';
+            btnSel.style.pointerEvents = sel > 0 ? 'auto' : 'none';
+        }
+    }
+
+    function imprimirSeleccionados() {
+        var ids = [];
+        document.querySelectorAll('.check-tramite:checked').forEach(function(cb) { ids.push(cb.value); });
+        if (ids.length === 0) { alert('Selecciona al menos un trámite.'); return; }
+        window.open('/TramiteAcademico/ImprimirVarios?ids=' + ids.join(','), '_blank');
+    }
+
+    // Búsqueda y filtro por universidad en tiempo real
+    document.getElementById('buscarHome').addEventListener('input', filtrarHome);
+    document.getElementById('filtroUniversidad').addEventListener('change', filtrarHome);
+
+    function filtrarHome() {
+        var texto = document.getElementById('buscarHome').value.toLowerCase();
+        var uni = document.getElementById('filtroUniversidad').value;
+        document.querySelectorAll('.fila-tramite').forEach(function(fila) {
+            var contenido = fila.textContent.toLowerCase();
+            var uniMatch = !uni || fila.getAttribute('data-universidad') === uni;
+            var textoMatch = !texto || contenido.indexOf(texto) !== -1;
+            fila.style.display = (uniMatch && textoMatch) ? '' : 'none';
+        });
+    }
+</script>
+}

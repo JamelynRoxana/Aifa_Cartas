@@ -8,7 +8,46 @@
     <link href="~/css/tailwind.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        input[type="text"]:not([data-no-capitalize]),
+        input:not([type]):not([data-no-capitalize]) {
+            text-transform: capitalize;
+        }
+        /* Responsive global */
+        .overflow-x-visible { overflow-x: auto; }
+        table { min-width: 600px; }
+        @@media (max-width: 768px) {
+            .max-w-5xl, .max-w-4xl, .max-w-3xl, .max-w-2xl { max-width: 100% !important; }
+            .grid-cols-1.md\:grid-cols-2, .grid-cols-1.md\:grid-cols-3 { grid-template-columns: 1fr !important; }
+            .hidden-mobile { display: none !important; }
+            table { min-width: auto; font-size: 0.8rem; }
+            table th, table td { padding: 8px 6px !important; }
+            .flex-wrap { flex-wrap: wrap; }
+        }
+        @@media (max-width: 640px) {
+            main { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            main > div > div { padding: 1rem !important; border-radius: 16px !important; }
+        }
+        .actions-menu { padding: 8px !important; min-width: 160px !important; z-index: 9999 !important; position: absolute !important; }
+        .actions-menu a, .actions-menu button { padding: 10px 14px !important; margin-bottom: 2px; }
+        .overflow-x-visible { overflow: visible !important; }
+        table { position: relative; }
+        tbody { overflow: visible !important; }
+        .rounded-xl.border { overflow: visible !important; }
+        [style*="overflow-x:auto"] { overflow: visible !important; }
+        [style*="overflow:visible"] { overflow: visible !important; }
+        .relative.inline-block { position: relative; z-index: 100; }
+    </style>
 
+    <script>
+        // Auto Title Case en inputs de texto al perder foco
+        document.addEventListener('focusout', function(e) {
+            var el = e.target;
+            if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === '') && !el.hasAttribute('data-no-capitalize') && !el.id.includes('filtro') && !el.id.includes('buscar') && !el.id.includes('Buscar') && !el.classList.contains('input-folio') && !el.classList.contains('captcha-input')) {
+                el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+            }
+        });
+    </script>
     <script>
         function checkAuth() {
             if (!localStorage.getItem('jwt_token') && window.location.pathname.toLowerCase().indexOf('/auth/login') === -1) {
@@ -19,7 +58,7 @@
         window.addEventListener('pageshow', function (event) { checkAuth(); });
     </script>
 </head>
-<body class="bg-[#F4F6F8] font-sans m-0 text-slate-800">
+<body class="bg-[#F4F6F8] font-sans m-0 text-slate-800" style="min-height:100vh;display:flex;flex-direction:column;">
     <nav id="mainNav" class="fixed top-0 w-full z-50 flex flex-wrap items-center justify-between px-6 py-4 xl:py-5 transition-all duration-400 ease-in-out text-white @(IsSectionDefined("Hero") ? "bg-transparent py-5" : "bg-[#001f3f]/95 backdrop-blur-md py-3 shadow-[0_4px_20px_rgba(0,0,0,0.2)]")">
         <div class="flex items-center justify-between w-full xl:w-auto">
             <a class="flex items-center transition-opacity hover:opacity-80 border-none outline-none" href="/">
@@ -33,7 +72,7 @@
         <div id="navMenu" class="hidden w-full xl:flex xl:w-auto xl:items-center xl:ml-12 mt-4 xl:mt-0 xl:flex-1">
             <ul class="flex flex-col xl:flex-row list-none p-0 m-0 w-full xl:w-auto xl:mr-auto xl:ml-5">
                 <!-- Trámites -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Trámites</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
@@ -43,18 +82,21 @@
                     </ul>
                 </li>
                 <!-- Estudiantes -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo,Estudiante">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Estudiantes</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
                     <ul class="nav-dropdown-menu hidden xl:absolute left-0 top-full xl:mt-5 before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:content-[''] w-full xl:w-auto xl:min-w-[12rem] bg-white border-t-4 border-[#0c2f57] rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.2)] p-3 list-none z-50 xl:invisible xl:opacity-0 xl:translate-y-2 xl:group-hover:flex xl:group-hover:visible xl:group-hover:opacity-100 xl:group-hover:translate-y-0 transition-all duration-300 flex-col gap-1 xl:pt-2">
                         <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Estudiante/Create"><i class="bi bi-person-plus mr-3 text-[#0074d9]"></i><span>Registro</span></a></li>
-                        <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Estudiante"><i class="bi bi-people mr-3 text-[#0074d9]"></i><span>Listado</span></a></li>
-                        <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/EtapaAifa"><i class="bi bi-bar-chart-steps mr-3 text-[#0074d9]"></i><span>Asignar Etapa</span></a></li>
+                        <li data-roles="Administrativo,Directivo"><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Estudiante"><i class="bi bi-people mr-3 text-[#0074d9]"></i><span>Listado</span></a></li>
+                        <li data-roles="Administrativo,Directivo"><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/EtapaAifa"><i class="bi bi-bar-chart-steps mr-3 text-[#0074d9]"></i><span>Asignar Etapa</span></a></li>
+                        <li data-roles="Administrativo,Directivo"><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/CodigoAcceso"><i class="bi bi-key mr-3 text-[#0074d9]"></i><span>Códigos Acceso</span></a></li>
+                        <li data-roles="Administrativo,Directivo"><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Usuario/Sesiones"><i class="bi bi-person-check mr-3 text-[#0074d9]"></i><span>Control Sesión</span></a></li>
+                        <li data-roles="Administrativo,Directivo"><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/ConfiguracionRegistro"><i class="bi bi-calendar-range mr-3 text-[#0074d9]"></i><span>Ventana Registro</span></a></li>
                     </ul>
                 </li>
                 <!-- Universidades -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Universidades</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
@@ -66,7 +108,7 @@
                     </ul>
                 </li>
                 <!-- Aeropuerto -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Aeropuerto</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
@@ -77,7 +119,7 @@
                     </ul>
                 </li>
                 <!-- Cartas -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Cartas</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
@@ -89,34 +131,97 @@
                     </ul>
                 </li>
                 <!-- Configuración -->
-                <li class="relative group mx-1 mb-2 xl:mb-0">
+                <li class="relative group mx-1 mb-2 xl:mb-0" data-roles="Administrativo,Directivo">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
                         <span>Config</span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
                     <ul class="nav-dropdown-menu hidden xl:absolute left-0 top-full xl:mt-5 before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:content-[''] w-full xl:w-auto xl:min-w-[12rem] bg-white border-t-4 border-[#0c2f57] rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.2)] p-3 list-none z-50 xl:invisible xl:opacity-0 xl:translate-y-2 xl:group-hover:flex xl:group-hover:visible xl:group-hover:opacity-100 xl:group-hover:translate-y-0 transition-all duration-300 flex-col gap-1 xl:pt-2">
                         <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/ImagenCatalogo"><i class="bi bi-images mr-3 text-[#0074d9]"></i><span>Catálogo Imágenes</span></a></li>
                         <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/ConfiguracionVisual"><i class="bi bi-sliders mr-3 text-[#0074d9]"></i><span>Config. Visual</span></a></li>
+                        <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Usuario"><i class="bi bi-shield-lock mr-3 text-[#0074d9]"></i><span>Usuarios Admin</span></a></li>
                     </ul>
                 </li>
                 <!-- Usuario (alineado a la derecha) -->
                 <li class="relative group mx-1 mb-2 xl:mb-0 xl:ml-auto">
                     <a class="py-2 px-3 font-semibold drop-shadow text-white hover:bg-white/15 rounded-lg transition duration-300 flex items-center justify-between cursor-pointer xl:pb-4 xl:-mb-4 relative z-10 nav-dropdown-toggle">
-                        <span><i class="bi bi-person-circle mr-1"></i> <span id="navUserName">Usuario</span></span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
+                        <span style="display:inline-flex;align-items:center;gap:6px;"><img id="navAvatar" src="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,0.3);" /><i class="bi bi-person-circle" id="navAvatarIcon"></i> <span id="navUserName">Usuario</span></span> <i class="bi bi-chevron-down ml-1 xl:ml-3 text-xs transition-transform duration-300 xl:group-hover:rotate-180"></i>
                     </a>
                     <ul class="nav-dropdown-menu hidden xl:absolute right-0 top-full xl:mt-5 before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:content-[''] w-full xl:w-auto xl:min-w-[12rem] bg-white border-t-4 border-[#0c2f57] rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.2)] p-3 list-none z-50 xl:invisible xl:opacity-0 xl:translate-y-2 xl:group-hover:flex xl:group-hover:visible xl:group-hover:opacity-100 xl:group-hover:translate-y-0 transition-all duration-300 flex-col gap-1 xl:pt-2">
-                        <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Usuario"><i class="bi bi-person-gear mr-3 text-[#0074d9]"></i><span>Administrar</span></a></li>
+                        <li><a class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-[#eef7ff] hover:translate-x-2 text-gray-800" href="/Auth/MiPerfil"><i class="bi bi-person-circle mr-3 text-[#0074d9]"></i><span>Mi Perfil</span></a></li>
                         <li><a id="btnLogout" class="flex items-center px-4 py-2 font-semibold rounded-lg transition-transform duration-200 hover:bg-red-50 hover:translate-x-0 text-gray-800" href="javascript:void(0);"><i class="bi bi-box-arrow-right mr-3 text-red-500 font-bold"></i><span class="text-red-600 font-bold">Cerrar sesión</span></a></li>
                     </ul>
                 </li>
             </ul>
+            <!-- Reloj -->
+            <div style="display:none;align-items:center;gap:8px;margin-left:16px;padding:6px 12px;border-left:1px solid rgba(255,255,255,0.2);" class="xl:!flex" id="navClockBox">
+                <span id="navClock" style="font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.9);font-family:'Inter',sans-serif;letter-spacing:1px;">--:--:--</span>
+            </div>
         </div>
     </nav>
 
     @RenderSection("Hero", required: false)
 
-    <main class="w-full relative z-10 pb-[50px] px-4 xl:px-12 flex justify-center @(IsSectionDefined("Hero") ? "-mt-[100px]" : "mt-[120px]")">
+    <main class="w-full relative z-10 pb-[50px] px-4 xl:px-12 flex justify-center @(IsSectionDefined("Hero") ? "-mt-[100px]" : "mt-[120px]")" style="flex:1;">
         <div class="w-full max-w-[1400px]">
             <div class="bg-white/90 backdrop-blur-sm rounded-[25px] p-6 sm:p-12 xl:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.08)] min-h-[600px] border border-white/30">
+                @if (TempData["Exito"] != null)
+                {
+                    <div class="alerta-global" style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:14px 18px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-check-circle-fill" style="color:#16a34a;font-size:1rem;"></i>
+                            </div>
+                            <span style="color:#166534;font-weight:600;font-size:0.9rem;">@TempData["Exito"]</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#16a34a;font-size:1.2rem;padding:4px;"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alerta-global" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;padding:14px 18px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;font-size:1rem;"></i>
+                            </div>
+                            <span style="color:#991b1b;font-weight:600;font-size:0.9rem;">@TempData["Error"]</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:1.2rem;padding:4px;"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                }
+                @if (TempData["Info"] != null)
+                {
+                    <div class="alerta-global" style="background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:14px 18px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-info-circle-fill" style="color:#2563eb;font-size:1rem;"></i>
+                            </div>
+                            <span style="color:#1e40af;font-weight:600;font-size:0.9rem;">@TempData["Info"]</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#2563eb;font-size:1.2rem;padding:4px;"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                }
+                @if (TempData["Advertencia"] != null)
+                {
+                    <div class="alerta-global" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:14px 18px;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-exclamation-triangle-fill" style="color:#d97706;font-size:1rem;"></i>
+                            </div>
+                            <span style="color:#92400e;font-weight:600;font-size:0.9rem;">@TempData["Advertencia"]</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#d97706;font-size:1.2rem;padding:4px;"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                }
+                <script>
+                    setTimeout(function() {
+                        document.querySelectorAll('.alerta-global').forEach(function(el) {
+                            el.style.transition = 'opacity 0.4s, transform 0.4s';
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateY(-10px)';
+                            setTimeout(function() { el.remove(); }, 400);
+                        });
+                    }, 2000);
+                </script>
                 @RenderBody()
             </div>
         </div>
@@ -135,8 +240,8 @@
                     <p class="text-gray-500 text-sm mb-6">Esta acción no se puede deshacer.</p>
                     <form id="deleteForm" method="post">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="w-full py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm mb-3">
-                            <i class="bi bi-trash mr-1"></i> Eliminar
+                        <button type="submit" id="deleteConfirmBtn" disabled class="w-full py-3 rounded-xl font-bold text-white bg-red-600 transition-colors shadow-sm mb-3" style="opacity:0.4;cursor:not-allowed;">
+                            <i class="bi bi-trash mr-1"></i> <span id="deleteCountdown">Eliminar (10)</span>
                         </button>
                     </form>
                     <button type="button" id="deleteCancelBtn" class="w-full py-3 rounded-xl font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors">
@@ -147,7 +252,7 @@
         </div>
     </div>
 
-    <footer class="text-center bg-[#001f3f] text-white/60 py-12 mt-12">
+    <footer class="text-center bg-[#001f3f] text-white/60 py-12" style="margin-top:auto;">
         <p>&copy; @DateTime.Now.Year - Terminal Pro Aeropuerto Internacional</p>
     </footer>
 
@@ -187,10 +292,42 @@
             });
             $(window).scroll(function () { updateNavbarStyle(); });
             updateNavbarStyle();
-            $('#btnLogout').click(function (e) { e.preventDefault(); localStorage.removeItem('jwt_token'); localStorage.removeItem('user_name'); window.location.href = '/Auth/Login'; });
+            $('#btnLogout').click(function (e) { e.preventDefault(); localStorage.removeItem('jwt_token'); localStorage.removeItem('user_name'); localStorage.removeItem('user_rol'); window.location.href = '/Auth/Login'; });
             // Mostrar nombre en navbar
             var navName = localStorage.getItem('user_name');
-            if (navName) { $('#navUserName').text(navName.split(' ')[0]); }
+            if (navName) {
+                var formatted = navName.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+                $('#navUserName').text(formatted);
+            }
+
+            // Mostrar avatar en navbar
+            var navAvatarUrl = localStorage.getItem('user_avatar');
+            if (navAvatarUrl) {
+                document.getElementById('navAvatar').src = navAvatarUrl;
+                document.getElementById('navAvatar').style.display = 'inline-block';
+                document.getElementById('navAvatarIcon').style.display = 'none';
+            }
+
+            // Reloj en tiempo real
+            function actualizarReloj() {
+                var ahora = new Date();
+                var h = ahora.getHours().toString().padStart(2, '0');
+                var m = ahora.getMinutes().toString().padStart(2, '0');
+                var s = ahora.getSeconds().toString().padStart(2, '0');
+                document.getElementById('navClock').textContent = h + ':' + m + ':' + s;
+            }
+            actualizarReloj();
+            setInterval(actualizarReloj, 1000);
+            document.getElementById('navClockBox').style.display = 'flex';
+
+            // Control de visibilidad por rol
+            var userRol = localStorage.getItem('user_rol') || '';
+            $('[data-roles]').each(function() {
+                var rolesPermitidos = $(this).attr('data-roles').split(',');
+                if (rolesPermitidos.indexOf(userRol) === -1) {
+                    $(this).hide();
+                }
+            });
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
@@ -210,16 +347,113 @@
             }
         });
 
-        // Modal de eliminación
+        // Modal de eliminación con temporizador
+        var deleteTimer = null;
         function openDeleteModal(url) {
             document.getElementById('deleteForm').action = url;
             document.getElementById('deleteModal').style.display = 'block';
+            
+            // Deshabilitar botón e iniciar cuenta regresiva
+            var btn = document.getElementById('deleteConfirmBtn');
+            var countdown = document.getElementById('deleteCountdown');
+            var segundos = 10;
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+            btn.style.cursor = 'not-allowed';
+            countdown.textContent = 'Eliminar (' + segundos + ')';
+            
+            if (deleteTimer) clearInterval(deleteTimer);
+            deleteTimer = setInterval(function() {
+                segundos--;
+                if (segundos <= 0) {
+                    clearInterval(deleteTimer);
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    countdown.textContent = 'Eliminar';
+                } else {
+                    countdown.textContent = 'Eliminar (' + segundos + ')';
+                }
+            }, 1000);
         }
         document.getElementById('deleteCancelBtn').addEventListener('click', function() {
             document.getElementById('deleteModal').style.display = 'none';
+            if (deleteTimer) clearInterval(deleteTimer);
         });
         document.getElementById('deleteModalOverlay').addEventListener('click', function() {
             document.getElementById('deleteModal').style.display = 'none';
+            if (deleteTimer) clearInterval(deleteTimer);
+        });
+    </script>
+
+    <!-- Modal de alerta personalizado -->
+    <div id="alertModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:20px;padding:2rem;max-width:400px;width:90%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.25);animation:alertIn 0.2s ease;">
+            <div id="alertIconBox" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;"></div>
+            <h3 id="alertTitle" style="font-size:1.1rem;font-weight:800;color:#0f172a;margin-bottom:0.5rem;"></h3>
+            <p id="alertMessage" style="color:#64748b;font-size:0.9rem;margin-bottom:1.5rem;line-height:1.5;"></p>
+            <button id="alertAcceptBtn" onclick="cerrarAlerta()" style="width:100%;padding:12px;background:#001f3f;border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,31,63,0.3);">
+                Aceptar
+            </button>
+        </div>
+    </div>
+    <style>
+        @@keyframes alertIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+        @@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    </style>
+    <script>
+        function mostrarAlerta(mensaje, tipo) {
+            tipo = tipo || 'info';
+            var modal = document.getElementById('alertModal');
+            var iconBox = document.getElementById('alertIconBox');
+            var title = document.getElementById('alertTitle');
+            var msg = document.getElementById('alertMessage');
+            var btn = document.getElementById('alertAcceptBtn');
+
+            if (tipo === 'error') {
+                iconBox.style.background = '#fee2e2';
+                iconBox.innerHTML = '<i class="bi bi-exclamation-circle-fill" style="color:#dc2626;font-size:1.5rem;"></i>';
+                title.textContent = '¡Atención!';
+                btn.style.background = '#dc2626';
+            } else if (tipo === 'exito') {
+                iconBox.style.background = '#dcfce7';
+                iconBox.innerHTML = '<i class="bi bi-check-circle-fill" style="color:#16a34a;font-size:1.5rem;"></i>';
+                title.textContent = '¡Listo!';
+                btn.style.background = '#16a34a';
+            } else if (tipo === 'advertencia') {
+                iconBox.style.background = '#fef3c7';
+                iconBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill" style="color:#d97706;font-size:1.5rem;"></i>';
+                title.textContent = 'Advertencia';
+                btn.style.background = '#d97706';
+            } else {
+                iconBox.style.background = '#dbeafe';
+                iconBox.innerHTML = '<i class="bi bi-info-circle-fill" style="color:#2563eb;font-size:1.5rem;"></i>';
+                title.textContent = 'Información';
+                btn.style.background = '#2563eb';
+            }
+            msg.textContent = mensaje;
+            modal.style.display = 'flex';
+        }
+        function cerrarAlerta() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+        document.getElementById('alertModal').addEventListener('click', function(e) {
+            if (e.target === this) cerrarAlerta();
+        });
+        // Override native alert
+        window.alert = function(msg) { mostrarAlerta(msg, 'advertencia'); };
+
+        // Validar que Fecha Inicio < Fecha Fin en todos los formularios
+        document.addEventListener('submit', function(e) {
+            var form = e.target;
+            var inicio = form.querySelector('input[name="FechaInicio"], input[name="FechaInicioPeriodo"]');
+            var fin = form.querySelector('input[name="FechaFin"], input[name="FechaFinPeriodo"]');
+            if (inicio && fin && inicio.value && fin.value) {
+                if (new Date(inicio.value) >= new Date(fin.value)) {
+                    e.preventDefault();
+                    mostrarAlerta('La fecha de inicio debe ser anterior a la fecha de fin.', 'error');
+                }
+            }
         });
     </script>
 </body>

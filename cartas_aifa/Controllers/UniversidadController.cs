@@ -24,7 +24,7 @@ public class UniversidadController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Universidad item)
     {
-        if (ModelState.IsValid) { _db.Universidades.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Universidades.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -39,7 +39,7 @@ public class UniversidadController : Controller
     public async Task<IActionResult> Edit(int id, Universidad item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         return View(item);
     }
 
@@ -55,6 +55,7 @@ public class UniversidadController : Controller
     {
         var item = await _db.Universidades.FindAsync(id);
         if (item != null) { _db.Universidades.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

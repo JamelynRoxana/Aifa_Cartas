@@ -1,50 +1,133 @@
 @model Estudiante
 @{
-    ViewData["Title"] = "Crear Estudiante";
+    ViewData["Title"] = "Registrar Estudiante";
 }
 
-<div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-person-plus mr-2"></i>Crear Estudiante</h2>
+<div id="verificando-registro" class="max-w-2xl mx-auto text-center py-12">
+    <i class="bi bi-hourglass-split text-4xl text-gray-400 animate-pulse"></i>
+    <p class="text-gray-500 mt-4">Verificando registro...</p>
+</div>
+
+<div id="registro-cerrado" class="max-w-2xl mx-auto text-center py-12" style="display:none;">
+    <div style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+        <i class="bi bi-lock-fill text-2xl text-red-500"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Registro no disponible</h2>
+    <p class="text-gray-500 mb-4" id="msgRegistroCerrado"></p>
+    <a href="/" class="text-blue-600 font-semibold text-sm">← Volver al inicio</a>
+</div>
+
+<div id="formulario-registro" class="max-w-3xl mx-auto" style="display:none;">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6"><i class="bi bi-person-plus mr-2"></i>Registrar Estudiante</h2>
 
     <form asp-action="Create" method="post" class="space-y-6">
-        <div>
-            <label asp-for="NombreCompleto" class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo</label>
-            <input asp-for="NombreCompleto" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Nombre del estudiante" />
-            <span asp-validation-for="NombreCompleto" class="text-red-500 text-sm"></span>
+        <input type="hidden" name="IdUsuario" id="hiddenUserId" value="" />
+
+        <!-- Sección: Datos personales -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;">
+            <h3 class="text-sm font-bold text-gray-500 uppercase mb-4"><i class="bi bi-person mr-1"></i> Datos personales</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="Nombre" class="block text-sm font-semibold text-gray-700 mb-2">Nombre(s)</label>
+                    <input asp-for="Nombre" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Nombre(s)" />
+                    <span asp-validation-for="Nombre" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label asp-for="ApellidoPaterno" class="block text-sm font-semibold text-gray-700 mb-2">Apellido Paterno</label>
+                    <input asp-for="ApellidoPaterno" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Apellido paterno" />
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label asp-for="ApellidoMaterno" class="block text-sm font-semibold text-gray-700 mb-2">Apellido Materno</label>
+                    <input asp-for="ApellidoMaterno" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Apellido materno" />
+                </div>
+                <div>
+                    <label asp-for="FechaNacimiento" class="block text-sm font-semibold text-gray-700 mb-2">Fecha de Nacimiento</label>
+                    <input asp-for="FechaNacimiento" type="date" style="background:#f0fdf4;border:1px solid #bbf7d0;" class="w-full px-4 py-3 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+                <div>
+                    <label asp-for="Matricula" class="block text-sm font-semibold text-gray-700 mb-2">Matrícula</label>
+                    <input asp-for="Matricula" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Matrícula" />
+                    <span asp-validation-for="Matricula" class="text-red-500 text-sm"></span>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label asp-for="Matricula" class="block text-sm font-semibold text-gray-700 mb-2">Matrícula</label>
-            <input asp-for="Matricula" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" placeholder="Matrícula" />
-            <span asp-validation-for="Matricula" class="text-red-500 text-sm"></span>
+        <!-- Sección: Información académica -->
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;">
+            <h3 class="text-sm font-bold text-gray-500 uppercase mb-4"><i class="bi bi-mortarboard mr-1"></i> Información académica</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Universidad</label>
+                    <select id="selectUniversidad" asp-items="ViewBag.Universidades" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Universidad --</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="IdF" class="block text-sm font-semibold text-gray-700 mb-2">Facultad</label>
+                    <select asp-for="IdF" id="selectFacultad" asp-items="ViewBag.IdF" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Facultad --</option>
+                    </select>
+                    <span asp-validation-for="IdF" class="text-red-500 text-sm"></span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label asp-for="Carrera" class="block text-sm font-semibold text-gray-700 mb-2">Carrera</label>
+                    <select asp-for="Carrera" id="selectCarrera" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Carrera --</option>
+                    </select>
+                    <span asp-validation-for="Carrera" class="text-red-500 text-sm"></span>
+                </div>
+                <div>
+                    <label asp-for="PlanEstudios" class="block text-sm font-semibold text-gray-700 mb-2">Plan de estudios</label>
+                    <select asp-for="PlanEstudios" id="selectPlan" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="Bimestral">Bimestral</option>
+                        <option value="Trimestral">Trimestral</option>
+                        <option value="Cuatrimestral">Cuatrimestral</option>
+                        <option value="Semestral">Semestral</option>
+                        <option value="Anual">Anual</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="PeriodoActual" class="block text-sm font-semibold text-gray-700 mb-2">Periodo actual</label>
+                    <select asp-for="PeriodoActual" id="selectPeriodo" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar plan primero --</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Universidad</label>
-            <select id="selectUniversidad" asp-items="ViewBag.Universidades" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar Universidad --</option>
-            </select>
-        </div>
-
-        <div>
-            <label asp-for="IdF" class="block text-sm font-semibold text-gray-700 mb-2">Facultad</label>
-            <select asp-for="IdF" id="selectFacultad" asp-items="ViewBag.IdF" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar Facultad --</option>
-            </select>
-            <span asp-validation-for="IdF" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="Carrera" class="block text-sm font-semibold text-gray-700 mb-2">Carrera</label>
-            <select asp-for="Carrera" id="selectCarrera" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
-                <option value="">-- Seleccionar Carrera --</option>
-            </select>
-            <span asp-validation-for="Carrera" class="text-red-500 text-sm"></span>
+        <!-- Sección: Asignación AIFA -->
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;">
+            <h3 class="text-sm font-bold text-gray-500 uppercase mb-4"><i class="bi bi-building mr-1"></i> Asignación AIFA</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label asp-for="IdDireccion" class="block text-sm font-semibold text-gray-700 mb-2">Dirección</label>
+                    <select asp-for="IdDireccion" id="selectDireccion" asp-items="ViewBag.Direcciones" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Dirección --</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="IdSubdireccion" class="block text-sm font-semibold text-gray-700 mb-2">Subdirección</label>
+                    <select asp-for="IdSubdireccion" id="selectSubdireccion" asp-items="ViewBag.Subdirecciones" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Subdirección --</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="IdDetalleEtapa" class="block text-sm font-semibold text-gray-700 mb-2">Detalle Etapa</label>
+                    <select asp-for="IdDetalleEtapa" id="selectDetalleEtapa" asp-items="ViewBag.DetallesEtapa" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                        <option value="">-- Seleccionar Etapa --</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="flex items-center gap-4 pt-4">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm">
-                <i class="bi bi-check-lg mr-1"></i> Guardar
+            <button type="submit" style="background:#001f3f;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                <i class="bi bi-check-lg"></i> Guardar
             </button>
             <a asp-action="Index" class="text-gray-600 hover:text-gray-800 font-semibold">Cancelar</a>
         </div>
@@ -54,45 +137,94 @@
 @section Scripts {
 <script>
     document.getElementById('selectUniversidad').addEventListener('change', function () {
-        const idUniversidad = this.value;
-        const selectFacultad = document.getElementById('selectFacultad');
-        const selectCarrera = document.getElementById('selectCarrera');
-
-        selectFacultad.innerHTML = '<option value="">-- Seleccionar Facultad --</option>';
-        selectCarrera.innerHTML = '<option value="">-- Seleccionar Carrera --</option>';
-
-        if (!idUniversidad) return;
-
-        fetch(`/Estudiante/GetFacultadesPorUniversidad?idUniversidad=${idUniversidad}`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(function (facultad) {
-                    const option = document.createElement('option');
-                    option.value = facultad.id;
-                    option.textContent = facultad.nombreF;
-                    selectFacultad.appendChild(option);
-                });
-            });
+        const id = this.value;
+        const selectF = document.getElementById('selectFacultad');
+        const selectC = document.getElementById('selectCarrera');
+        selectF.innerHTML = '<option value="">-- Seleccionar Facultad --</option>';
+        selectC.innerHTML = '<option value="">-- Seleccionar Carrera --</option>';
+        if (!id) return;
+        fetch(`/Estudiante/GetFacultadesPorUniversidad?idUniversidad=${id}`)
+            .then(r => r.json())
+            .then(data => { data.forEach(f => { selectF.innerHTML += `<option value="${f.id}">${f.nombreF}</option>`; }); });
     });
 
     document.getElementById('selectFacultad').addEventListener('change', function () {
-        const idFacultad = this.value;
-        const selectCarrera = document.getElementById('selectCarrera');
-
-        selectCarrera.innerHTML = '<option value="">-- Seleccionar Carrera --</option>';
-
-        if (!idFacultad) return;
-
-        fetch(`/Estudiante/GetCarrerasPorFacultad?idFacultad=${idFacultad}`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(function (carrera) {
-                    const option = document.createElement('option');
-                    option.value = carrera.nombreCarrera;
-                    option.textContent = carrera.nombreCarrera;
-                    selectCarrera.appendChild(option);
-                });
-            });
+        const id = this.value;
+        const selectC = document.getElementById('selectCarrera');
+        selectC.innerHTML = '<option value="">-- Seleccionar Carrera --</option>';
+        if (!id) return;
+        fetch(`/Estudiante/GetCarrerasPorFacultad?idFacultad=${id}`)
+            .then(r => r.json())
+            .then(data => { data.forEach(c => { selectC.innerHTML += `<option value="${c.nombreCarrera}">${c.nombreCarrera}</option>`; }); });
     });
+
+    document.getElementById('selectDireccion').addEventListener('change', function () {
+        const id = this.value;
+        const selectS = document.getElementById('selectSubdireccion');
+        selectS.innerHTML = '<option value="">-- Seleccionar Subdirección --</option>';
+        if (!id) return;
+        fetch(`/Estudiante/GetSubdireccionesPorDireccion?idDireccion=${id}`)
+            .then(r => r.json())
+            .then(data => { data.forEach(s => { selectS.innerHTML += `<option value="${s.id}">${s.nombreSub}</option>`; }); });
+    });
+
+    // Plan de estudios -> Periodos disponibles
+    document.getElementById('selectPlan').addEventListener('change', function() {
+        var plan = this.value;
+        var selectP = document.getElementById('selectPeriodo');
+        selectP.innerHTML = '<option value="">-- Seleccionar --</option>';
+        var max = 0;
+        if (plan === 'Bimestral') max = 22;
+        else if (plan === 'Trimestral') max = 16;
+        else if (plan === 'Cuatrimestral') max = 13;
+        else if (plan === 'Semestral') max = 14;
+        else if (plan === 'Anual') max = 9;
+        for (var i = 1; i <= max; i++) {
+            selectP.innerHTML += '<option value="' + i + '">' + i + '</option>';
+        }
+    });
+
+    // Verificar si el estudiante ya se registró Y si la ventana está abierta
+    (function() {
+        var token = localStorage.getItem('jwt_token');
+        var rol = localStorage.getItem('user_rol');
+
+        // Primero verificar si la ventana de registro está abierta
+        fetch('/ConfiguracionRegistro/Estado')
+            .then(r => r.json())
+            .then(estado => {
+                if (!estado.habilitado) {
+                    // Registro cerrado para todos
+                    document.getElementById('verificando-registro').style.display = 'none';
+                    document.getElementById('msgRegistroCerrado').textContent = estado.mensaje;
+                    document.getElementById('registro-cerrado').style.display = 'block';
+                    return;
+                }
+
+                // Ventana abierta, verificar si ya se registró
+                if (token && rol === 'Estudiante') {
+                    try {
+                        var payload = JSON.parse(atob(token.split('.')[1]));
+                        var userId = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+                        if (userId) {
+                            document.getElementById('hiddenUserId').value = userId;
+                            fetch('/Estudiante/VerificarRegistro?userId=' + userId)
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (data.registrado) {
+                                        window.location.replace('/Estudiante/Create?userId=' + userId);
+                                    } else {
+                                        document.getElementById('verificando-registro').style.display = 'none';
+                                        document.getElementById('formulario-registro').style.display = 'block';
+                                    }
+                                });
+                            return;
+                        }
+                    } catch(e) {}
+                }
+                document.getElementById('verificando-registro').style.display = 'none';
+                document.getElementById('formulario-registro').style.display = 'block';
+            });
+    })();
 </script>
 }

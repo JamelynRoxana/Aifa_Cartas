@@ -14,9 +14,9 @@ public class ConfiguracionVisual
     [ForeignKey("ImagenId")]
     public ImagenCatalogo? Imagen { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public decimal CoordX { get; set; }
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public decimal CoordY { get; set; }
     public decimal Ancho { get; set; }
     public decimal Alto { get; set; }
@@ -29,8 +29,8 @@ public class ConfiguracionVisual
     /// <summary>Opacidad de 0 a 100 (solo para imágenes de fondo)</summary>
     public int Opacidad { get; set; } = 100;
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaInicio { get; set; }
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaFin { get; set; }
 }

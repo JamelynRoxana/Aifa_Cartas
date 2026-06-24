@@ -9,13 +9,13 @@ public class DirectorEscolar
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public int IdF { get; set; }
 
     [ForeignKey("IdF")]
     public Facultad? Facultad { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string Nombre { get; set; } = string.Empty;
     public string? Rango { get; set; }
     public string? Puesto { get; set; }

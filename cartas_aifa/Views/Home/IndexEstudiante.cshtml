@@ -1,0 +1,295 @@
+@{
+    Layout = null;
+    var direcciones = (IEnumerable<DireccionAifa>?)ViewBag.Direcciones;
+    var subdirecciones = (IEnumerable<SubdireccionAifa>?)ViewBag.Subdirecciones;
+    var registro = (Estudiante?)ViewBag.Registro;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIFA - Portal Estudiante</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; overflow-x: hidden; }
+
+        .nav-top {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(0,31,63,0.97); backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .nav-top .brand { display: flex; align-items: center; gap: 12px; }
+        .nav-top .brand img { height: 40px; }
+        .nav-top .brand span { color: #fff; font-weight: 700; font-size: 0.9rem; }
+        .nav-top .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-top .nav-links button {
+            color: rgba(255,255,255,0.7); font-size: 0.82rem; font-weight: 600;
+            padding: 8px 16px; border-radius: 8px; transition: all 0.2s;
+            background: none; border: none; cursor: pointer;
+        }
+        .nav-top .nav-links button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-top .nav-links button.active { background: rgba(162,227,196,0.15); color: #a2e3c4; }
+        .nav-top .user-area { display: flex; align-items: center; gap: 12px; }
+        .nav-top .user-area .name { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+        .nav-top .btn-logout {
+            background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-top .btn-logout:hover { border-color: #ef4444; color: #fca5a5; background: rgba(239,68,68,0.1); }
+
+        .carousel-wrapper { margin-top: 64px; position: relative; overflow: hidden; }
+        .carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 200%; }
+        .carousel-slide { width: 50%; min-height: calc(100vh - 64px); flex-shrink: 0; }
+
+        /* Slide 1 - Info AIFA */
+        .hero { height: 350px; background: linear-gradient(160deg, #001f3f 0%, #0c3d6e 60%, #134e6f 100%); display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+        .hero::before { content:''; position:absolute; top:-80px; right:-80px; width:350px; height:350px; background:radial-gradient(circle, rgba(162,227,196,0.08) 0%, transparent 70%); border-radius:50%; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-badge { display:inline-block; background:rgba(162,227,196,0.12); border:1px solid rgba(162,227,196,0.25); color:#a2e3c4; font-size:0.72rem; font-weight:700; padding:5px 14px; border-radius:20px; margin-bottom:1.2rem; letter-spacing:0.06em; }
+        .hero h1 { color:#fff; font-size:2.4rem; font-weight:900; line-height:1.2; }
+        .hero h1 span { color:#a2e3c4; }
+        .hero p { color:rgba(255,255,255,0.55); font-size:0.95rem; margin-top: 0.5rem; }
+
+        .content-area { max-width: 1000px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+        .notice { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 1rem 1.3rem; margin-bottom: 2.5rem; display: flex; align-items: center; gap: 10px; }
+        .notice i { color: #d97706; font-size: 1.1rem; flex-shrink: 0; }
+        .notice p { color: #92400e; font-size: 0.83rem; font-weight: 500; margin: 0; }
+        .section-title { text-align: center; margin-bottom: 2rem; }
+        .section-title h2 { font-size: 1.4rem; font-weight: 800; color: #001f3f; }
+        .section-title p { color: #94a3b8; font-size: 0.85rem; margin-top: 0.3rem; }
+        .cards-row { display: flex; gap: 1.2rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .card-item { flex: 1; min-width: 250px; background: #fff; border-radius: 16px; padding: 1.8rem; border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .card-item .icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.2rem; color: #fff; }
+        .card-item h4 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem; }
+        .card-item p { color: #64748b; font-size: 0.82rem; line-height: 1.7; }
+        .datos-box { background: #001f3f; border-radius: 20px; padding: 2.5rem; margin-bottom: 3rem; }
+        .datos-box h2 { color: #fff; text-align: center; font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; }
+        .datos-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+        .dato { text-align: center; min-width: 140px; flex: 1; padding: 0.6rem; }
+        .dato .lbl { color: rgba(255,255,255,0.35); font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+        .dato .val { color: #fff; font-size: 0.9rem; font-weight: 600; }
+        .dir-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+        .dir-card { flex: 1; min-width: 280px; background: #fff; border-radius: 14px; padding: 1.3rem; border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .dir-card h4 { font-size: 0.9rem; font-weight: 700; color: #0f172a; margin-bottom: 0.6rem; }
+        .dir-card h4 i { color: #3b82f6; margin-right: 6px; }
+        .dir-card .sub-item { background: #f8fafc; border-radius: 8px; padding: 7px 12px; margin-top: 5px; font-size: 0.8rem; color: #475569; }
+        .dir-card .sub-item i { color: #cbd5e1; margin-right: 6px; font-size: 0.65rem; }
+
+        /* Slide 2 - Mi Registro */
+        .registro-area { max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem; }
+        .header-card { text-align: center; margin-bottom: 2rem; }
+        .header-card .check-icon { width: 56px; height: 56px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+        .header-card .check-icon i { font-size: 1.6rem; color: #059669; }
+        .header-card h2 { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+        .header-card p { color: #64748b; font-size: 0.85rem; margin-top: 0.3rem; }
+        .date-badge { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 0.8rem; text-align: center; margin-bottom: 1.5rem; font-size: 0.83rem; color: #1e40af; font-weight: 600; }
+        .data-section { background: #fff; border-radius: 14px; border: 1px solid #f1f5f9; margin-bottom: 1rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .data-section .section-header { background: #f8fafc; padding: 0.9rem 1.3rem; border-bottom: 1px solid #f1f5f9; font-weight: 700; font-size: 0.85rem; color: #0f172a; }
+        .data-section .section-header i { margin-right: 8px; color: #3b82f6; }
+        .data-section .section-body { padding: 1.3rem; }
+        .data-row { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 0.8rem; }
+        .data-row:last-child { margin-bottom: 0; }
+        .data-field { flex: 1; min-width: 160px; }
+        .data-field .label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 2px; }
+        .data-field .value { font-size: 0.88rem; font-weight: 600; color: #1e293b; }
+        .info-note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 0.9rem 1.2rem; display: flex; align-items: center; gap: 10px; margin-top: 1.5rem; }
+        .info-note i { color: #d97706; font-size: 1rem; flex-shrink: 0; }
+        .info-note p { color: #92400e; font-size: 0.78rem; font-weight: 500; margin: 0; }
+
+        footer { background: #001f3f; color: rgba(255,255,255,0.35); text-align: center; padding: 1.5rem; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+    <nav class="nav-top">
+        <div class="brand">
+            <img src="/images/Logo-AIFA.png" alt="AIFA" />
+            <span>Expediente Aero</span>
+        </div>
+        <div class="nav-links">
+            <button id="btnSlide0" class="active" onclick="goSlide(0)"><i class="bi bi-house"></i> Inicio</button>
+            <button id="btnSlide1" onclick="goSlide(1)"><i class="bi bi-person-lines-full"></i> Mi Registro</button>
+        </div>
+        <div class="user-area">
+            <span class="name" id="navName"></span>
+            <button class="btn-logout" id="btnLogout"><i class="bi bi-box-arrow-right"></i> Salir</button>
+        </div>
+    </nav>
+
+    <div class="carousel-wrapper">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- SLIDE 1: Info AIFA -->
+            <div class="carousel-slide">
+                <section class="hero">
+                    <div class="hero-content">
+                        <span class="hero-badge"><i class="bi bi-airplane-engines"></i> PORTAL ESTUDIANTE</span>
+                        <h1>Aeropuerto Internacional<br/><span>Felipe Ángeles</span></h1>
+                        <p>Programa de Formación Profesional</p>
+                    </div>
+                </section>
+                <div class="content-area">
+                    <div class="notice">
+                        <i class="bi bi-bell-fill"></i>
+                        <p>Más adelante se te contactará para los trámites correspondientes a tu proceso académico.</p>
+                    </div>
+                    <div class="section-title"><h2>Nuestros Principios</h2><p>Lo que nos impulsa</p></div>
+                    <div class="cards-row">
+                        <div class="card-item">
+                            <div class="icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);"><i class="bi bi-bullseye"></i></div>
+                            <h4>Objetivo</h4>
+                            <p>Mejorar la conectividad del Sistema Aeroportuario Metropolitano, incrementando la eficiencia operativa y la competitividad económica.</p>
+                        </div>
+                        <div class="card-item">
+                            <div class="icon" style="background:linear-gradient(135deg,#10b981,#047857);"><i class="bi bi-rocket-takeoff"></i></div>
+                            <h4>Misión</h4>
+                            <p>Operar un aeropuerto de clase mundial, ofreciendo servicios seguros, eficientes y sustentables.</p>
+                        </div>
+                        <div class="card-item">
+                            <div class="icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);"><i class="bi bi-eye"></i></div>
+                            <h4>Visión</h4>
+                            <p>Ser referente nacional e internacional en operación aeroportuaria moderna y sostenible.</p>
+                        </div>
+                    </div>
+                    <div class="datos-box">
+                        <h2><i class="bi bi-info-circle"></i> Datos del Aeropuerto</h2>
+                        <div class="datos-grid">
+                            <div class="dato"><div class="lbl">Ubicación</div><div class="val">Zumpango, Edo. Méx.</div></div>
+                            <div class="dato"><div class="lbl">Código IATA</div><div class="val" style="font-size:1.2rem;">NLU</div></div>
+                            <div class="dato"><div class="lbl">Inauguración</div><div class="val">21/03/2022</div></div>
+                            <div class="dato"><div class="lbl">Construido por</div><div class="val">SEDENA</div></div>
+                            <div class="dato"><div class="lbl">Capacidad</div><div class="val">20M pax/año</div></div>
+                        </div>
+                    </div>
+                    <div class="section-title"><h2>Estructura Organizacional</h2><p>Direcciones y subdirecciones</p></div>
+                    <div class="dir-row">
+                        @if (direcciones != null && direcciones.Any())
+                        {
+                            foreach (var dir in direcciones)
+                            {
+                                <div class="dir-card">
+                                    <h4><i class="bi bi-building"></i>@dir.NombreDir</h4>
+                                    @if (subdirecciones != null)
+                                    {
+                                        var subs = subdirecciones.Where(s => s.IdDir == dir.Id);
+                                        foreach (var sub in subs)
+                                        {
+                                            <div class="sub-item"><i class="bi bi-chevron-right"></i>@sub.NombreSub</div>
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Mi Registro -->
+            <div class="carousel-slide">
+                <div class="registro-area">
+                    @if (registro != null)
+                    {
+                        <div class="header-card">
+                            <div class="check-icon"><i class="bi bi-check-circle-fill"></i></div>
+                            <h2>Registro completado</h2>
+                            <p>Tus datos fueron registrados exitosamente.</p>
+                        </div>
+                        <div class="date-badge"><i class="bi bi-calendar-check"></i> Registro: @registro.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                        <div class="data-section">
+                            <div class="section-header"><i class="bi bi-person"></i>Datos personales</div>
+                            <div class="section-body">
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Nombre(s)</div><div class="value">@registro.Nombre</div></div>
+                                    <div class="data-field"><div class="label">Ap. Paterno</div><div class="value">@(registro.ApellidoPaterno ?? "-")</div></div>
+                                    <div class="data-field"><div class="label">Ap. Materno</div><div class="value">@(registro.ApellidoMaterno ?? "-")</div></div>
+                                </div>
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Fecha Nac.</div><div class="value">@(registro.FechaNacimiento?.ToString("dd/MM/yyyy") ?? "-")</div></div>
+                                    <div class="data-field"><div class="label">Matrícula</div><div class="value">@registro.Matricula</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-section">
+                            <div class="section-header"><i class="bi bi-mortarboard"></i>Datos académicos</div>
+                            <div class="section-body">
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Universidad</div><div class="value">@(registro.Facultad?.Universidad?.NombreU ?? "-")</div></div>
+                                    <div class="data-field"><div class="label">Facultad</div><div class="value">@(registro.Facultad?.NombreF ?? "-")</div></div>
+                                </div>
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Carrera</div><div class="value">@(registro.Carrera ?? "-")</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-section">
+                            <div class="section-header"><i class="bi bi-airplane"></i>Asignación AIFA</div>
+                            <div class="section-body">
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Dirección</div><div class="value">@(registro.Direccion?.NombreDir ?? "-")</div></div>
+                                    <div class="data-field"><div class="label">Subdirección</div><div class="value">@(registro.Subdireccion?.NombreSub ?? "-")</div></div>
+                                </div>
+                                <div class="data-row">
+                                    <div class="data-field"><div class="label">Etapa</div><div class="value">@(registro.DetalleEtapa?.TipoEtapa ?? "-")</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-note"><i class="bi bi-info-circle"></i><p>Si necesitas modificar tus datos, contacta al administrador.</p></div>
+                    }
+                    else
+                    {
+                        <div class="header-card">
+                            <div class="check-icon" style="background:#eff6ff;"><i class="bi bi-person-plus" style="color:#3b82f6;"></i></div>
+                            <h2>Aún no te has registrado</h2>
+                            <p>Completa tu registro de datos académicos.</p>
+                        </div>
+                        <div style="text-align:center;">
+                            <a href="/Estudiante/Create" style="display:inline-block;background:#001f3f;color:#fff;padding:12px 28px;border-radius:12px;font-weight:700;font-size:0.9rem;text-decoration:none;">
+                                <i class="bi bi-arrow-right"></i> Ir a registrarme
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; @DateTime.Now.Year — Aeropuerto Internacional Felipe Ángeles | Sistema Expediente Aero</footer>
+
+    <script>
+        var currentSlide = 0;
+        function goSlide(n) {
+            currentSlide = n;
+            document.getElementById('carouselTrack').style.transform = 'translateX(-' + (n * 50) + '%)';
+            document.getElementById('btnSlide0').classList.toggle('active', n === 0);
+            document.getElementById('btnSlide1').classList.toggle('active', n === 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('navName').textContent = localStorage.getItem('user_name') || '';
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_rol');
+            window.location.href = '/Auth/Login';
+        });
+        if (!localStorage.getItem('jwt_token')) { window.location.replace('/Auth/Login'); }
+
+        // Pasar userId para cargar registro
+        (function() {
+            var token = localStorage.getItem('jwt_token');
+            if (token) {
+                try {
+                    var payload = JSON.parse(atob(token.split('.')[1]));
+                    var userId = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+                    if (userId && !window.location.search.includes('userId')) {
+                        window.location.replace('/Home/Estudiante?userId=' + userId);
+                    }
+                } catch(e) {}
+            }
+        })();
+    </script>
+</body>
+</html>

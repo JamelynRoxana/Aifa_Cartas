@@ -10,6 +10,12 @@ public class UsuarioController : Controller
     private readonly AppDbContext _db;
     public UsuarioController(AppDbContext db) => _db = db;
 
+    public async Task<IActionResult> Sesiones()
+    {
+        var estudiantes = await _db.Usuarios.Where(u => u.Rol == "Estudiante").ToListAsync();
+        return View(estudiantes);
+    }
+
     public async Task<IActionResult> Index(string? buscar)
     {
         var query = _db.Usuarios.AsQueryable();
@@ -45,6 +51,7 @@ public class UsuarioController : Controller
             item.Contrasena = BCrypt.Net.BCrypt.HashPassword(item.Contrasena);
             _db.Usuarios.Add(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro creado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         return View(item);
@@ -79,6 +86,7 @@ public class UsuarioController : Controller
 
             _db.Update(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro actualizado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         return View(item);
@@ -96,6 +104,7 @@ public class UsuarioController : Controller
     {
         var item = await _db.Usuarios.FindAsync(id);
         if (item != null) { _db.Usuarios.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 }

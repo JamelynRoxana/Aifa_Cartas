@@ -24,6 +24,8 @@ public class AppDbContext : DbContext
     public DbSet<Carrera> Carreras => Set<Carrera>();
     public DbSet<Leyenda> Leyendas => Set<Leyenda>();
     public DbSet<PiePagina> PiesDePagina => Set<PiePagina>();
+    public DbSet<CodigoAcceso> CodigosAcceso => Set<CodigoAcceso>();
+    public DbSet<ConfiguracionRegistro> ConfiguracionesRegistro => Set<ConfiguracionRegistro>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

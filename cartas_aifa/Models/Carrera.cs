@@ -9,12 +9,12 @@ public class Carrera
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public int IdF { get; set; }
 
     [ForeignKey("IdF")]
     public Facultad? Facultad { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string NombreCarrera { get; set; } = string.Empty;
 }

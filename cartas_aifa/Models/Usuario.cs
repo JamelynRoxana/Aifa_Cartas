@@ -24,4 +24,7 @@ public class Usuario
     public string? ContrasenaTemporal { get; set; }
     public DateTime? ContrasenaTemporalExpira { get; set; }
     public bool ContrasenaTempUsada { get; set; } = false;
+
+    /// <summary>URL o ruta del avatar del usuario</summary>
+    public string? AvatarUrl { get; set; }
 }

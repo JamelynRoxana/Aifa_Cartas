@@ -1,0 +1,157 @@
+@model Estudiante
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Registro - AIFA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+
+        .nav-top {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(0,31,63,0.97); backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .nav-top .brand { display: flex; align-items: center; gap: 12px; }
+        .nav-top .brand img { height: 40px; }
+        .nav-top .brand span { color: #fff; font-weight: 700; font-size: 0.9rem; }
+        .nav-top .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-top .nav-links a {
+            color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.82rem; font-weight: 600;
+            padding: 8px 14px; border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-top .nav-links a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-top .nav-links a.active { background: rgba(162,227,196,0.15); color: #a2e3c4; }
+        .nav-top .user-area { display: flex; align-items: center; gap: 12px; }
+        .nav-top .user-area .name { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+        .nav-top .btn-logout {
+            background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-top .btn-logout:hover { border-color: #ef4444; color: #fca5a5; background: rgba(239,68,68,0.1); }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 100px 1.5rem 3rem; }
+
+        .header-card { text-align: center; margin-bottom: 2rem; }
+        .header-card .check-icon { width: 60px; height: 60px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+        .header-card .check-icon i { font-size: 1.8rem; color: #059669; }
+        .header-card h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem; }
+        .header-card p { color: #64748b; font-size: 0.9rem; }
+
+        .date-badge { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 0.8rem 1.2rem; text-align: center; margin-bottom: 2rem; font-size: 0.85rem; color: #1e40af; font-weight: 600; }
+        .date-badge i { margin-right: 6px; }
+
+        .data-section { background: #fff; border-radius: 16px; border: 1px solid #f1f5f9; margin-bottom: 1.2rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .data-section .section-header { background: #f8fafc; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; font-weight: 700; font-size: 0.9rem; color: #0f172a; }
+        .data-section .section-header i { margin-right: 8px; color: #3b82f6; }
+        .data-section .section-body { padding: 1.5rem; }
+        .data-row { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; }
+        .data-row:last-child { margin-bottom: 0; }
+        .data-field { flex: 1; min-width: 180px; }
+        .data-field .label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 3px; }
+        .data-field .value { font-size: 0.9rem; font-weight: 600; color: #1e293b; }
+
+        .info-note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1rem 1.3rem; display: flex; align-items: center; gap: 10px; margin-top: 1.5rem; }
+        .info-note i { color: #d97706; font-size: 1rem; flex-shrink: 0; }
+        .info-note p { color: #92400e; font-size: 0.8rem; font-weight: 500; margin: 0; }
+
+        footer { background: #001f3f; color: rgba(255,255,255,0.35); text-align: center; padding: 1.5rem; font-size: 0.75rem; margin-top: 3rem; }
+    </style>
+</head>
+<body>
+    <nav class="nav-top">
+        <div class="brand">
+            <img src="/images/Logo-AIFA.png" alt="AIFA" />
+            <span>Expediente Aero</span>
+        </div>
+        <div class="nav-links">
+            <a href="/Home/Estudiante"><i class="bi bi-house"></i> Inicio</a>
+            <a href="/Estudiante/Create" class="active"><i class="bi bi-person-lines-full"></i> Mi Registro</a>
+        </div>
+        <div class="user-area">
+            <span class="name" id="navName"></span>
+            <button class="btn-logout" id="btnLogout"><i class="bi bi-box-arrow-right"></i> Salir</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-card">
+            <div class="check-icon"><i class="bi bi-check-circle-fill"></i></div>
+            <h2>Registro completado</h2>
+            <p>Tus datos fueron registrados exitosamente.</p>
+        </div>
+
+        <div class="date-badge">
+            <i class="bi bi-calendar-check"></i> Fecha y hora de registro: @Model.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+        </div>
+
+        <div class="data-section">
+            <div class="section-header"><i class="bi bi-person"></i>Datos personales</div>
+            <div class="section-body">
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Nombre(s)</div><div class="value">@Model.Nombre</div></div>
+                    <div class="data-field"><div class="label">Apellido Paterno</div><div class="value">@(Model.ApellidoPaterno ?? "-")</div></div>
+                    <div class="data-field"><div class="label">Apellido Materno</div><div class="value">@(Model.ApellidoMaterno ?? "-")</div></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Fecha de Nacimiento</div><div class="value">@(Model.FechaNacimiento?.ToString("dd/MM/yyyy") ?? "-")</div></div>
+                    <div class="data-field"><div class="label">Matrícula</div><div class="value">@Model.Matricula</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="section-header"><i class="bi bi-mortarboard"></i>Datos académicos</div>
+            <div class="section-body">
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Universidad</div><div class="value">@(Model.Facultad?.Universidad?.NombreU ?? "-")</div></div>
+                    <div class="data-field"><div class="label">Facultad</div><div class="value">@(Model.Facultad?.NombreF ?? "-")</div></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Carrera</div><div class="value">@(Model.Carrera ?? "-")</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="section-header"><i class="bi bi-airplane"></i>Asignación AIFA</div>
+            <div class="section-body">
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Dirección</div><div class="value">@(Model.Direccion?.NombreDir ?? "-")</div></div>
+                    <div class="data-field"><div class="label">Subdirección</div><div class="value">@(Model.Subdireccion?.NombreSub ?? "-")</div></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-field"><div class="label">Etapa</div><div class="value">@(Model.DetalleEtapa?.TipoEtapa ?? "-")</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-note">
+            <i class="bi bi-info-circle"></i>
+            <p>Si necesitas modificar tus datos, contacta al administrador.</p>
+        </div>
+    </div>
+
+    <footer>&copy; @DateTime.Now.Year — Aeropuerto Internacional Felipe Ángeles | Sistema Expediente Aero</footer>
+
+    <script>
+        document.getElementById('navName').textContent = localStorage.getItem('user_name') || '';
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_rol');
+            window.location.href = '/Auth/Login';
+        });
+        if (!localStorage.getItem('jwt_token')) { window.location.replace('/Auth/Login'); }
+    </script>
+</body>
+</html>

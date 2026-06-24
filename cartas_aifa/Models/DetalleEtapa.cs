@@ -9,7 +9,7 @@ public class DetalleEtapa
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string TipoEtapa { get; set; } = string.Empty;
 
     public ICollection<DetallesTipoCarta>? TiposDeCartas { get; set; }

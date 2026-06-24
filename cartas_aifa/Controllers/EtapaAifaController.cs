@@ -30,7 +30,7 @@ public class EtapaAifaController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(EtapaAifa item)
     {
-        if (ModelState.IsValid) { _db.EtapasAifa.Add(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.EtapasAifa.Add(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro creado exitosamente."; return RedirectToAction(nameof(Index)); }
         await CargarViewBags();
         return View(item);
     }
@@ -48,7 +48,7 @@ public class EtapaAifaController : Controller
     public async Task<IActionResult> Edit(int id, EtapaAifa item)
     {
         if (id != item.Id) return NotFound();
-        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        if (ModelState.IsValid) { _db.Update(item); await _db.SaveChangesAsync(); TempData["Exito"] = "Registro actualizado exitosamente."; return RedirectToAction(nameof(Index)); }
         await CargarViewBags();
         return View(item);
     }
@@ -65,6 +65,7 @@ public class EtapaAifaController : Controller
     {
         var item = await _db.EtapasAifa.FindAsync(id);
         if (item != null) { _db.EtapasAifa.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 

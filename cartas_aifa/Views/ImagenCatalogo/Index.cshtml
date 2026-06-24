@@ -3,56 +3,145 @@
     ViewData["Title"] = "Catálogo de Imágenes";
 }
 
-<div class="flex flex-wrap items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-gray-900"><i class="bi bi-images mr-2"></i>Catálogo de Imágenes</h2>
-    <a asp-action="Create" class="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">
-        <i class="bi bi-plus-circle mr-1"></i> Crear Nuevo
+<div style="margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h2 style="font-size:1.8rem;font-weight:800;color:#001f3f;margin-bottom:0.2rem;">
+            <i class="bi bi-images mr-2"></i>Catálogo de Imágenes
+        </h2>
+        <p style="color:#64748b;font-size:0.85rem;">Gestión de imágenes para cartas</p>
+    </div>
+    <a asp-action="Create" style="background:#001f3f;color:#fff;padding:10px 20px;border-radius:10px;font-weight:600;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+        <i class="bi bi-plus-circle"></i> Crear Nuevo
     </a>
 </div>
 
-<div class="overflow-x-visible rounded-xl border border-gray-200">
-    <table class="w-full text-left border-collapse">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="px-6 py-3 font-bold text-gray-900">Nombre del Archivo</th>
-                <th class="px-4 py-3 font-bold text-gray-900">URL Imagen</th>
-                <th class="px-4 py-3 font-bold text-gray-900">Fecha de Carga</th>
-                <th class="px-4 py-3 font-bold text-gray-900 text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            @if (Model != null && Model.Any())
-            {
-                foreach (var item in Model)
+<!-- Search -->
+<div style="margin-bottom:1rem;">
+    <input type="text" id="buscarLocal" placeholder="Buscar por nombre de imagen..."
+           style="width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.85rem;outline:none;background:#f8fafc;" />
+</div>
+
+<!-- Table -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;overflow:visible;box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+    <div style="overflow-x:auto;">
+        <table style="width:100%;text-align:left;border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;">
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Nombre del Archivo</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">URL Imagen</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Fecha de Carga</th>
+                    <th style="padding:12px 16px;font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;text-align:center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
                 {
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 text-gray-900">@item.NombreArchivo</td>
-                        <td class="px-4 py-4 text-gray-600 truncate max-w-xs">@item.UrlImagen</td>
-                        <td class="px-4 py-4 text-gray-600">@item.FechaCarga.ToString("dd/MM/yyyy")</td>
-                        <td class="px-4 py-4 text-center">
-                            <div class="relative inline-block">
-                                <button class="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none actions-toggle">
-                                    <i class="bi bi-three-dots-vertical text-gray-600 text-lg"></i>
-                                </button>
-                                <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] hidden actions-menu">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-t-xl"><i class="bi bi-pencil mr-2 text-blue-500"></i>Editar</a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="bi bi-eye mr-2 text-gray-500"></i>Detalles</a>
-                                    <button type="button" onclick="openDeleteModal('/@(ViewContext.RouteData.Values["controller"])/Delete/@item.Id')" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-xl"><i class="bi bi-trash mr-2"></i>Eliminar</button>
+                    foreach (var item in Model)
+                    {
+                        <tr style="border-bottom:1px solid #f8fafc;transition:background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:14px 16px;color:#0f172a;font-size:0.88rem;">@item.NombreArchivo</td>
+                            <td style="padding:14px 16px;color:#0f172a;font-size:0.88rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@item.UrlImagen</td>
+                            <td style="padding:14px 16px;color:#0f172a;font-size:0.88rem;">@item.FechaCarga.ToString("dd/MM/yyyy")</td>
+                            <td style="padding:14px 16px;text-align:center;">
+                                <div class="relative inline-block">
+                                    <button class="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none actions-toggle">
+                                        <i class="bi bi-three-dots-vertical text-gray-600 text-lg"></i>
+                                    </button>
+                                    <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] hidden actions-menu">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-t-xl"><i class="bi bi-pencil mr-2 text-blue-500"></i>Editar</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="bi bi-eye mr-2 text-gray-500"></i>Detalles</a>
+                                        <button type="button" onclick="openDeleteModal('/@(ViewContext.RouteData.Values["controller"])/Delete/@item.Id')" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-xl"><i class="bi bi-trash mr-2"></i>Eliminar</button>
+                                    </div>
                                 </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding:3rem 1rem;color:#64748b;">
+                            <div style="width:50px;height:50px;background:#f1f5f9;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                                <i class="bi bi-images" style="font-size:1.3rem;color:#94a3b8;"></i>
                             </div>
+                            <p style="font-size:0.88rem;margin:0;">No hay imágenes registradas.</p>
                         </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="4" class="text-center py-12 text-gray-500">
-                        <i class="bi bi-inbox text-4xl block mb-3"></i>
-                        No hay imágenes registradas.
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<!-- Pagination -->
+<div id="paginacion" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;">
+    <button id="btn-primera" onclick="irPagina(1)" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;" title="Primera">
+        <i class="bi bi-chevron-double-left"></i>
+    </button>
+    <button id="btn-anterior" onclick="paginaAnterior()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.8rem;">
+        <i class="bi bi-chevron-left"></i> Anterior
+    </button>
+    <span id="pag-info" style="font-size:0.8rem;color:#64748b;font-weight:600;padding:0 8px;">Página 1 de 1</span>
+    <button id="btn-siguiente" onclick="paginaSiguiente()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.8rem;">
+        Siguiente <i class="bi bi-chevron-right"></i>
+    </button>
+    <button id="btn-ultima" onclick="irUltima()" style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;" title="Última">
+        <i class="bi bi-chevron-double-right"></i>
+    </button>
+</div>
+
+@section Scripts {
+<script>
+    var porPagina = 20;
+    var paginaActual = 1;
+    var filasVisibles = [];
+
+    function obtenerFilas() {
+        return Array.from(document.querySelectorAll('tbody tr')).filter(function(f) {
+            return !f.querySelector('td[colspan]');
+        });
+    }
+
+    function aplicarPaginacion() {
+        var total = filasVisibles.length;
+        var totalPaginas = Math.max(1, Math.ceil(total / porPagina));
+        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+        var inicio = (paginaActual - 1) * porPagina;
+        var fin = inicio + porPagina;
+        filasVisibles.forEach(function(fila, i) {
+            fila.style.display = (i >= inicio && i < fin) ? '' : 'none';
+        });
+        document.getElementById('pag-info').textContent = 'Página ' + paginaActual + ' de ' + totalPaginas;
+        document.getElementById('btn-anterior').disabled = (paginaActual <= 1);
+        document.getElementById('btn-primera').disabled = (paginaActual <= 1);
+        document.getElementById('btn-siguiente').disabled = (paginaActual >= totalPaginas);
+        document.getElementById('btn-ultima').disabled = (paginaActual >= totalPaginas);
+        var btns = [document.getElementById('btn-anterior'), document.getElementById('btn-primera'), document.getElementById('btn-siguiente'), document.getElementById('btn-ultima')];
+        btns.forEach(function(b) { b.style.opacity = b.disabled ? '0.4' : '1'; b.style.cursor = b.disabled ? 'not-allowed' : 'pointer'; });
+    }
+
+    function paginaAnterior() { if (paginaActual > 1) { paginaActual--; aplicarPaginacion(); } }
+    function paginaSiguiente() { var tp = Math.ceil(filasVisibles.length / porPagina); if (paginaActual < tp) { paginaActual++; aplicarPaginacion(); } }
+    function irPagina(n) { paginaActual = n; aplicarPaginacion(); }
+    function irUltima() { paginaActual = Math.ceil(filasVisibles.length / porPagina); aplicarPaginacion(); }
+
+    function filtrarYPaginar() {
+        var texto = document.getElementById('buscarLocal').value.toLowerCase();
+        var todas = obtenerFilas();
+        filasVisibles = [];
+        todas.forEach(function(fila) {
+            var contenido = fila.textContent.toLowerCase();
+            if (!texto || contenido.indexOf(texto) !== -1) {
+                filasVisibles.push(fila);
+            } else {
+                fila.style.display = 'none';
+            }
+        });
+        paginaActual = 1;
+        aplicarPaginacion();
+    }
+
+    document.getElementById('buscarLocal').addEventListener('input', filtrarYPaginar);
+    filtrarYPaginar();
+</script>
+}

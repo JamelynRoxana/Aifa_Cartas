@@ -55,6 +55,7 @@ public class ConfiguracionVisualController : Controller
         {
             _db.ConfiguracionesVisuales.Add(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro creado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         await CargarViewBags();
@@ -78,6 +79,7 @@ public class ConfiguracionVisualController : Controller
         {
             _db.Update(item);
             await _db.SaveChangesAsync();
+            TempData["Exito"] = "Registro actualizado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
         await CargarViewBags(id);
@@ -96,6 +98,7 @@ public class ConfiguracionVisualController : Controller
     {
         var item = await _db.ConfiguracionesVisuales.FindAsync(id);
         if (item != null) { _db.ConfiguracionesVisuales.Remove(item); await _db.SaveChangesAsync(); }
+        TempData["Exito"] = "Registro eliminado exitosamente.";
         return RedirectToAction(nameof(Index));
     }
 

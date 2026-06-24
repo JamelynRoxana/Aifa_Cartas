@@ -9,7 +9,7 @@ public class PiePagina
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public string Texto { get; set; } = string.Empty;
 
     /// <summary>Si tiene línea superior decorativa</summary>
@@ -36,9 +36,9 @@ public class PiePagina
     /// <summary>Aceptacion, Termino, Ambas</summary>
     public string? MostrarEn { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaInicio { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Este campo es obligatorio.")]
     public DateTime FechaFin { get; set; }
 }
